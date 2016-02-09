@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logcat_tag">PopMovies1</string>
+    <string name="DebugMsg1">MainActivity onCreate(Bundle)</string>
+    <string name="DebugMsg2">MainActivityFragment.onCreate( Bundle)</string>
+
+    <string name="Message1">Error in getting screen parameters</string>
+    <string name="Message2">No saved instance ...create new movie list</string>
+    <string name="Message3">No internet Connection available, quitting</string>
+    <string name="Message4">Internet Connection available, getting the movie names</string>
+    <string name="Message5">Starting the actual download</string>
+    <string name="Message6">Film Data Found</string>
+    <string name="Message7">Error connecting to server</string>
+    <string name="Message8">Loading...</string>
+    <string name="Message9">Movie info retrieval cancelled</string>
+    <string name="Message10">AsyncTask does not exist</string>
+    <string name="Message11">Inside the detail fragment</string>
+    <string name="Message12">After loading the data in fragment</string>
+    <string name="Message13">Settings change require refresh ... create new movie list</string>
+    <string name="Message14"></string>
+
+</resources>

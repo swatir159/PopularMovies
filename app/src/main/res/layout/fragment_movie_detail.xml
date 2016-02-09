@@ -1,0 +1,115 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+
+    tools:context="com.example.android.popmoviesstage1.UI.MovieDetailActivityFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"    >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="New Text"
+            android:id="@+id/MovieTitle"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/material_deep_teal_200"
+
+            android:typeface="normal"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="@dimen/abc_text_size_headline_material" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/MovieTitle"
+            >
+
+
+            <ImageView android:id="@+id/MovieDetailView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="start"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_toRightOf="@+id/MovieDetailView"
+                android:layout_alignBottom="@+id/MovieDetailView">
+
+                <TextView
+                    android:text="@string/ReleaseDateLabel"
+                    android:id="@+id/ReleaseDateLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+
+                    />
+
+                <TextView
+                    android:id="@+id/ReleaseDate"
+                    android:layout_below="@+id/ReleaseDateLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                        android:id="@+id/RatingValue"
+                        android:text="00.00"
+                        android:layout_below="@+id/ReleaseDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+
+                />
+                <TextView
+                   android:text="@string/RatingLabel"
+                   android:id="@+id/RatingValueLabel"
+                    android:layout_alignBottom="@+id/RatingValue"
+                    android:layout_toRightOf="@+id/RatingValue"
+                    android:layout_toEndOf="@+id/RatingValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+
+                    android:textSize="20dp" />
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/OverView"
+            android:scrollIndicators="right"
+            android:scrollbars = "vertical"
+            android:layout_below="@+id/relativeLayout"
+            android:nestedScrollingEnabled="true" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:id="@+id/movie_trailer"
+            android:contentDescription="@string/movie_trailer_text"
+            android:layout_below="@+id/OverView" />
+
+    </RelativeLayout>
+</ScrollView>
