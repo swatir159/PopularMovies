@@ -1,5 +1,31 @@
 <resources>
     <string name="app_name">PopularMovies</string>
+    <!-- Detail Fragment UI texts -->
+    <string name="default_title_text">Movie Title</string>
+    <string name="title_content_description">Movie Title</string>
+    <string name="movie_poster_image">Movie Poster Image</string>
+    <string name="poster_transition_element">Poster Transition element</string>
+    <string name="rating_content_description">Rating</string>
+    <string name="movie_backdrop_content_description">Movie Backdrop</string>
+    <string name="vote_count_content_description">Average Vote Count </string>
+    <string name="original_language_content_description">Dummy Text</string>
+    <string name="release_date_content_decription">Release Date</string>
+    <string name="overview_title">Overview</string>
+    <string name="default_review_text">XXX</string>
+    <string name="default_author">Unknown</string>
+
+
+    <string name="default_overview_text">Sunil belongs to a middle-class family, and is intent in pursuing his career with a music group,
+    despite of his dad disapproval. Sunil is also in love with Anna, but Anna does not really love him,
+    but likes him as a friend. Sunil is persistent, but instead Anna openly declares her love for Chris.
+    In order to impress his dad, Sunil forges his examination results, but then later confesses to his family,
+    who receive this news in utter dismay. Will this change Sunil\'s ways?
+    Will Anna change her mind about Sunil or will she get married to Chris? </string>
+    <string name="overview_content_description">Overview of the Movie</string>
+
+    <string name="play_button">Play</string>
+    <!-- Detail Fragment UI texts Ends-->
+
     <!-- Menu label to fetch updated weather info from the server -->
 
 
@@ -91,32 +117,33 @@
     <string-array name="pref_sort_by_titles">
         <item>Popularity</item>
         <item>Ratings</item>
-        <item>Favorites</item>
+
 
 
     </string-array>
     <string-array name="pref_sort_by_values">
         <item>Popularity</item>
         <item>Ratings</item>
-        <item>Favourite</item>
+
 
     </string-array>
 
     <string name="pref_sort_by_key" translatable="false">Sort By</string>
-    <string name="pref_sort_by_default" translatable="false">Popularity.Asc</string>
+    <string name="pref_sort_by_default" translatable="false">Popularity</string>
 
     <!-- Example settings for Sort By -->
     <string name="pref_sort_by_order_key" translatable="false">Sort By Order</string>
     <string name="pref_title_sort_by_order">Sort By Order</string>
     <string name ="pref_sort_by_order_default">Asc </string>
     <string-array name="pref_sort_by_orders_values">
-    <item>Asc</item>
+        <item>Asc</item>
         <item>Desc</item>
-        </string-array>
+    </string-array>
     <string-array name="pref_sort_by_orders_titles">
         <item>Asc</item>
         <item>Desc</item>
     </string-array>
+
 
 
 </resources>

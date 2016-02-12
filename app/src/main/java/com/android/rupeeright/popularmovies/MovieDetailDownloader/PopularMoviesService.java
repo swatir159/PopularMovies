@@ -1,116 +1,161 @@
-package com.android.rupeeright.popularmovies.WebDataFetcher;
+package com.android.rupeeright.popularmovies.MovieDetailDownloader;
 
-import android.app.ProgressDialog;
+import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.text.format.Time;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.android.rupeeright.popularmovies.DataStorage.MovieContract;
 import com.android.rupeeright.popularmovies.R;
-import com.android.rupeeright.popularmovies.UI.MainActivityFragment;
-import com.android.rupeeright.popularmovies.Model.Film;
 import com.android.rupeeright.popularmovies.Utils.PopMoviesConstants;
-
-
+import com.android.rupeeright.popularmovies.Utils.Utilities;
+import com.android.rupeeright.popularmovies.WebDataFetcher.AsyncDownloader;
+import com.android.rupeeright.popularmovies.WebDataFetcher.MovieDBConnector;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
 import java.util.Vector;
 
-
 /**
- * Created by swatir on 1/13/2016.
+ * An {@link IntentService} subclass for handling asynchronous task requests in
+ * a service on a separate handler thread.
+ * <p/>
+ * TODO: Customize class - update intent actions, extra parameters and static
+ * helper methods.
  */
-public class AsyncDownloader extends AsyncTask<String, Void, Void> {
+public class PopularMoviesService extends IntentService {
+    // TODO: Rename actions, choose action names that describe tasks that this
+    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
+    private final String LOG_TAG = PopularMoviesService.class.getSimpleName();
 
-    //public static final String TAG = AsyncDownloader.class.getSimpleName();
 
 
-    private Context mContext;
-    //private MainActivityFragment mMovieGridFragment;
-    //private List<Film> mFilmsList;
-    //private ProgressDialog mDialog;
-    private String mURL;
-    //private long mStartTime;
+    /*
+    private static final String ACTION_FOO = "com.android.rupeeright.popularmovies.MovieDetailDownloader.action.FOO";
+    private static final String ACTION_BAZ = "com.android.rupeeright.popularmovies.MovieDetailDownloader.action.BAZ";
 
-    public AsyncDownloader(Context ctxParam /*, MainActivityFragment movieFrgParam */ ) {
-        mContext = ctxParam;
-        //classToLoad = c;
-        //this.mMovieGridFragment = movieFrgParam;
-        //this.mDialog = null;
-        this.mURL = null;
-
-    }
-
+    // TODO: Rename parameters
+    private static final String EXTRA_PARAM1 = "com.android.rupeeright.popularmovies.MovieDetailDownloader.extra.PARAM1";
+    private static final String EXTRA_PARAM2 = "com.android.rupeeright.popularmovies.MovieDetailDownloader.extra.PARAM2";
+ */
     /**
-     * onPreExecute runs on the UI thread before doInBackground.
-     * This will start showing a small dialog that says Loading with a spinner
-     * to let the user know download is in progress
+     * Starts this service to perform action Foo with the given parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
      */
     /*
-    @Override
-    protected void onPreExecute() {
-//        if (mMovieGridFragment.getCallbacks() != null) {
-        super.onPreExecute();
-
-        mDialog = new ProgressDialog(mContext);
-        mDialog.setMessage(mContext.getString(R.string.Message8));
-        mDialog.setProgressStyle(mDialog.STYLE_SPINNER);
-        mDialog.setCancelable(true);
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                mDialog.dismiss();
-            }
-        });
-        mDialog.show();
+    // TODO: Customize helper method
+    public static void startActionFoo(Context context, String param1, String param2) {
+        Intent intent = new Intent(context, PopularMoviesService.class);
+        intent.setAction(ACTION_FOO);
+        intent.putExtra(EXTRA_PARAM1, param1);
+        intent.putExtra(EXTRA_PARAM2, param2);
+        context.startService(intent);
     }
-    //mStartTime = System.currentTimeMillis();
-    //   }
-
-    */
-    public String getmURL() {
-        return mURL;
-    }
-
-    public void setmURL(String url) {
-        this.mURL = url;
-    }
+*/
     /**
-     * doInBackground() runs in the background on a worker thread. This is where code that can block the GUI should go.
-     *  Since we are using asynctask this is already in background threas we use okHttp method
-     *  call.execute() which executes in current thread (which is the background threas of this Async class)
-     *  Once we finish retrieving jsonData it is passed to method onPostExecute()
-     * @param params
-     * @return
+     * Starts this service to perform action Baz with the given parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
      */
+    // TODO: Customize helper method
+    /*
+    public static void startActionBaz(Context context, String param1, String param2) {
+        Intent intent = new Intent(context, PopularMoviesService.class);
+        intent.setAction(ACTION_BAZ);
+        intent.putExtra(EXTRA_PARAM1, param1);
+        intent.putExtra(EXTRA_PARAM2, param2);
+        context.startService(intent);
+    }
+    */
+
+    public PopularMoviesService() {
+        super("PopularMoviesService");
+    }
+
     @Override
-    protected Void doInBackground(String... params)
+    protected void onHandleIntent(Intent intent) {
+       /* if (intent != null) {
+            final String action = intent.getAction();
+            if (ACTION_FOO.equals(action)) {
+                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
+                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
+                handleActionFoo(param1, param2);
+            } else if (ACTION_BAZ.equals(action)) {
+                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
+                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
+                handleActionBaz(param1, param2);
+            }
+        }
+        */
+
+        if (PopMoviesConstants.DEBUG) Log.d("PopMovies", LOG_TAG + ":"+ " onHandleIntent");
+
+        MovieDBConnector url = MovieDBConnector.getInstance();
+        //String newSortOrderPref = Utilities.getSortOrderPreference(getActivity());
+
+        url.setmAPIKey(getApplicationContext().getResources().getString(R.string.themovieDB_api_key));
+        String getMoviesHttpMethod = url.getMoviesQuery("Popularity.Asc");
+
+        downloadDataandInsertintoDB(getMoviesHttpMethod);
+
+    }
+
+    /**
+     * Handle action Foo in the provided background thread with the provided
+     * parameters.
+     */
+   /*  private void handleActionFoo(String param1, String param2) {
+        // TODO: Handle action Foo
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+*/
+    /**
+     * Handle action Baz in the provided background thread with the provided
+     * parameters.
+     */
+  /*  private void handleActionBaz(String param1, String param2) {
+        // TODO: Handle action Baz
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    */
+
+    protected Void downloadDataandInsertintoDB(String urlParam)
     {
         //String url = params[0];
-        setmURL(params[0]);
-        if (PopMoviesConstants.DEBUG) Log.i(mContext.getString(R.string.logcat_tag), mContext.getString(R.string.Message5));
 
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies", LOG_TAG + ":" + " downloadDataandInsertintoDB");
+
+        /*
+        OkHttpClient cl = new OkHttpClient();
+Request req = new Request.Builder()
+              .url("http://www.google.com")
+              .header("Connection", "close")
+              .get()
+              .build();
+Response res = cl.newCall(req).execute();
+         */
         OkHttpClient client = new OkHttpClient();
+
+        //client.networkInterceptors().add(new StethoInterceptor());
         //client.setConnectTimeout(150, "ms");
         Request request = new Request.Builder()
-                .url(mURL)
+                .url(urlParam)
+                .header("Connection", "close")
+                .get()
                 .build();
         Call call = client.newCall(request);
 
@@ -119,12 +164,10 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
         String jsonData = null;
 
         try {
-            //timeNow = System.currentTimeMillis();
-            if (!isCancelled()) {
                 response = call.execute();
                 if (response.isSuccessful()) {
                     jsonData = response.body().string();
-                    if (PopMoviesConstants.DEBUG) Log.i(mContext.getString(R.string.logcat_tag), mContext.getString(R.string.Message6));
+                    if (PopMoviesConstants.DEBUG) Log.i("PopMovies", "Data Downloaded - Now will Parse & enter in DB");
                     getMovieDataFromJson(jsonData);
                     response.body().close();
                 }
@@ -132,88 +175,16 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
                     response.body().close();
                     throw new IOException("Unexpected code " + response);
                 }
-
-            }
-
-            //(timeNow - mStartTime < (5 * 60 * 1000));
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         // return jsonData; //This is returned to onPostExecute()
         return null;
     }
 
-    /*  *************************************
-    @Override
-    protected void onCancelled() {
-        //if (mMovieGridFragment.getCallbacks() != null) {
-        super.onCancelled();
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
-            this.mDialog = null;
-        }
 
-        if (PopMoviesConstants.DEBUG) Log.i(mContext.getString(R.string.logcat_tag), mContext.getString(R.string.Message9));
-       // Toast toast = Toast.makeText(mMovieGridFragment.getActivity(),
-       //         mContext.getString(R.string.Message9), Toast.LENGTH_LONG);
-       // toast.setGravity(Gravity.TOP, 25, 400);
-       // toast.show();
-       //
-        //mFilmsList = null;
-        //mMovieGridFragment.updateFilmList(mFilmsList);
-        //mMovieGridFragment.updateAdapter(mFilmsList);
-        //userOnBoardingTask=null;
-        //}
-    }
-    *************************************** */
-    /*
-    private void getFilmsFrom(String rawJSON) {
-        JSONObject results = null;
-        if (rawJSON != null && rawJSON.trim().length()>0 ) {
-            try
-            {
-                results = new JSONObject(rawJSON);
-                JSONArray data = results.getJSONArray("results");
-                if (data != null )
-                {
-                    int dataSize = data.length();
-                    if (dataSize == 0) {
-                        //showNotFoundNotification();
-                        //super.onBackPressed();
-                    }
-                    mFilmsList = new ArrayList<Film>(dataSize);
-                    for (int i = 0; i < dataSize; i++) {
-                        //Log.d("logcat_tag", Integer.toString(i) + "th data in Response ");
-                        JSONObject jsonFilm;
-                        jsonFilm = data.getJSONObject(i);
-                        String DateLocal = jsonFilm.getString("release_date");
-                        if (DateLocal != null && !DateLocal.equals("null"))
-                        {
-                            String IdLocal = jsonFilm.getString("id");
-                            String TitleLocal= jsonFilm.getString("title");
-                            String PosterPathLocal = jsonFilm.getString("poster_path");
-                            String OverviewLocal = jsonFilm.getString("overview");
-                            String strRatingLocal = jsonFilm.getString("vote_average");
-                            float RatingLocal = Float.parseFloat(jsonFilm.getString("vote_average"));
-                            Film FilmLocal = new Film(IdLocal, TitleLocal, PosterPathLocal, OverviewLocal, RatingLocal,strRatingLocal, DateLocal);
-                            //Log.d("logcat_tag", "The Film [" + Integer.toString(i) + "] Details :=" + FilmLocal.toString());
-                            mFilmsList.add(FilmLocal);
-                        }
-                    }
-                }
-                // Collections.sort(films, new FilmComparator());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-*   */
-
-  /*  private String[] getMovieDataFromJson(String rawJSON) */
     private void getMovieDataFromJson(String rawJSON)
             throws JSONException {
 
@@ -262,8 +233,10 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
         final String VIDEO = "video";
         final String VOTE_AVERAGE = "vote_average";
 
-                // Weather information.  Each day's forecast info is an element of the "list" array.
+        // Weather information.  Each day's forecast info is an element of the "list" array.
         final String RESULTS = "results";
+
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies", LOG_TAG + ":" + " getMoviesDatafromJSON");
 
         JSONObject results = null;
         if (rawJSON != null && rawJSON.trim().length()>0 ) {
@@ -295,7 +268,7 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
                         JSONObject jsonFilm;
                         jsonFilm = data.getJSONObject(i);
                         String DateLocal = jsonFilm.getString(RELEASE_DATE);
-                        if (DateLocal != null && !DateLocal.equals("null")) {
+
                             String IdLocal = jsonFilm.getString(ID);
                             Boolean AdultLocal = jsonFilm.getBoolean(ADULT);
                             Boolean VideoLocal = jsonFilm.getBoolean(VIDEO);
@@ -309,6 +282,11 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
                             float RatingLocal = Float.parseFloat(jsonFilm.getString(VOTE_AVERAGE));
                             String BackdropPathLocal = jsonFilm.getString(BACKDROP_PATH);
                             String VoteCountLocal = jsonFilm.getString(VOTE_COUNT);
+                            Long ReleaseDate = 0L;
+                        if (DateLocal != null && !DateLocal.equals("null")&& !DateLocal.equals("")) {
+                            ReleaseDate = Utilities.getDateInDBDateformatFromMovieDbDateString(DateLocal);
+                        }
+
                             /*
                             final String GENRE_IDS =         "genre_ids";
                             final String VOTE_COUNT = "vote_count";
@@ -325,7 +303,7 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_OVERVIEW, OverviewLocal);
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_POPULARITY, PopularityLocal);
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_POSTER_PATH, PosterPathLocal);
-                            movieValues.put(MovieContract.MoviesEntry.COLUMN_RELEASE_DATE, DateLocal);
+                            movieValues.put(MovieContract.MoviesEntry.COLUMN_RELEASE_DATE, ReleaseDate);
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_TITLE, TitleLocal);
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_VIDEO, VideoLocal); /* Boolean.FALSE */
                             movieValues.put(MovieContract.MoviesEntry.COLUMN_VOTE_AVERAGE, RatingLocal);
@@ -335,82 +313,37 @@ public class AsyncDownloader extends AsyncTask<String, Void, Void> {
                             //Film FilmLocal = new Film(IdLocal, TitleLocal, PosterPathLocal, OverviewLocal, RatingLocal,strRatingLocal, DateLocal);
                             //Log.d("logcat_tag", "The Film [" + Integer.toString(i) + "] Details :=" + FilmLocal.toString());
                             //mFilmsList.add(FilmLocal);
-                        }
+
                     }
+                    int inserted = 0;
                     // add to database
                     if (cVVector.size() > 0) {
                         // Student: call bulkInsert to add the weatherEntries to the database here
                         ContentValues[] cvArray = new ContentValues[cVVector.size()];
                         cVVector.toArray(cvArray);
-                        mContext.getContentResolver().bulkInsert(MovieContract.MoviesEntry.CONTENT_URI, cvArray);
+                        getApplicationContext().getContentResolver().bulkInsert(MovieContract.MoviesEntry.CONTENT_URI, cvArray);
                     }
+                    if (PopMoviesConstants.DEBUG) Log.d(LOG_TAG, "PopularMovies Service Complete. " + cVVector.size() + " Inserted");
                 }
                 // Collections.sort(films, new FilmComparator());
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e){
                 e.printStackTrace();
             }
         }
        /* String[] resultStrs = convertContentValuesToUXFormat(cVVector);
         return resultStrs; */
     }
+    public static class AlarmReceiver extends BroadcastReceiver {
 
-    /**
-     * onPostExecute runs on the  main (GUI) thread and receives
-     * the result of doInBackground.
-     *
-     * Here we pass a string representation of jsonData to the child/receiver
-     * activity.
-     *
-     * @param jsonData
-     */
-    /*
-    @Override
-    protected void onPostExecute(String jsonData) {
-        //if (mMovieGridFragment.getCallbacks()!= null ) {
-        super.onPostExecute(jsonData);
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (PopMoviesConstants.DEBUG) Log.i( "PopMovies", AlarmReceiver.class.getSimpleName() + ":" + " downloadMovieData" );
+            Intent sendIntent = new Intent(context, PopularMoviesService.class);
+            //sendIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, intent.getStringExtra(SunshineService.LOCATION_QUERY_EXTRA));
+            context.startService(sendIntent);
 
-        if (jsonData != null && jsonData.length() > 0) {
-            if (mDialog != null && mDialog.isShowing()) {
-                mDialog.dismiss();
-                this.mDialog = null;
-            }
-
-            //getFilmsFrom(jsonData);
-
-            try {
-                    getMovieDataFromJson(jsonData);
-            } catch (JSONException e) {
-                    e.printStackTrace();
-            }
-
-
-
-            if (mFilmsList != null) {
-                mMovieGridFragment.updateFilmList(mFilmsList);
-                mMovieGridFragment.updateAdapter(mFilmsList);
-            }
-        }
-        //}
-    }
-    */
-
-   /* private void hideProgress() {
-        if(mDialog != null) {
-            if(mDialog.isShowing()) { //check if dialog is showing.
-
-                //get the Context object that was used to great the dialog
-                Context context = ((ContextWrapper)mDialog.getContext()).getBaseContext();
-
-                //if the Context used here was an activity AND it hasn't been finished or destroyed
-                //then dismiss it
-                if(context instanceof Activity) {
-                    if(!((Activity)context).isFinishing()) // && !((Activity)context).isDestroyed()
-                        mDialog.dismiss();
-                } else //if the Context used wasnt an Activity, then dismiss it too
-                    mDialog.dismiss();
-            }
-            mDialog = null;
         }
     }
-    */
 }

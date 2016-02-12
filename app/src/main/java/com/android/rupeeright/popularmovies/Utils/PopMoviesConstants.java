@@ -1,4 +1,4 @@
-package com.android.rupeeright.popularmovies.Util;
+package com.android.rupeeright.popularmovies.Utils;
 
 /**
  * Created by swatir on 1/13/2016.
@@ -8,7 +8,7 @@ public class PopMoviesConstants {
     public static final String POSTER_BASE_PATH = "https://image.tmdb.org/t/p/";
     public static final String IMAGE_SIZE_TO_DOWNLOAD_IN_DETAIL_VIEW = "w185/";
     public static final String BACKDROP_BASE_PATH = "http://image.tmdb.org/t/p/";
-    public static final String IMAGE_SIZE_TO_DOWNLOAD_IN_GRID = "original/";   /* \"w92\", \"w154\", \"w185\", \"w342\", \"w500\", \"w780\", or \"original\" */
+    public static final String IMAGE_SIZE_TO_DOWNLOAD_IN_GRID = "original";   /* \"w92\", \"w154\", \"w185\", \"w342\", \"w500\", \"w780\", or \"original\" */
 
     public static final double OVERVIEW_HEIGHT_PERCENT = 0.40;
     public static final double POSTER_HEIGHT_PERCENT = 0.40;

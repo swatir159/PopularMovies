@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Created by swatir on 1/13/2016.
  */
-public class Film implements Parcelable {
+public class Film /* implements Parcelable */ {
     /*
     original title
 movie poster image thumbnail
@@ -28,11 +28,12 @@ release date
     private String mStrRating;
     private String mDate;
     private String mFormattedDate;
+    private String mBackdropPath;
 
     public Film() {
     }
 
-    public Film(String IDParam, String TitleParam, String PosterPathParam, String OverViewParam, float RatingParam, String strRatingParam,  String DateParam )
+    public Film(String IDParam, String TitleParam, String PosterPathParam, String OverViewParam, float RatingParam, String strRatingParam,  String DateParam, String BackdropParam )
     {
         mID = IDParam;
         mTitle = TitleParam;
@@ -41,9 +42,10 @@ release date
         mRating = RatingParam;
         mStrRating = strRatingParam;
         setFormattedDate( DateParam );
+        mBackdropPath = BackdropParam;
     }
 
-
+/*
     public static final Parcelable.Creator<Film> CREATOR = new Creator<Film>() {
         public Film createFromParcel(Parcel source) {
             Film myFilm = new Film();
@@ -74,6 +76,7 @@ release date
         parcel.writeString(mDate);
     }
 
+*/
     /**
      * This method receives a string representation as "yyyy-MM-dd" for date
      * then it converts it to type Date and sets date with setDate(date) method
@@ -163,6 +166,13 @@ release date
     }
     public void setId(String idParam) {
         this.mID = idParam;
+    }
+
+    public String getBackdropPath() {
+        return mBackdropPath;
+    }
+    public void setBackdropPath(String idParam) {
+        this.mBackdropPath = idParam;
     }
 
     public String toString(){

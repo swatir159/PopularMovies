@@ -1,6 +1,6 @@
 package com.android.rupeeright.popularmovies.WebDataFetcher;
 
-import com.android.rupeeright.popularmovies.Util.PopMoviesConstants;
+import com.android.rupeeright.popularmovies.Utils.PopMoviesConstants;
 
 /**
  * Created by swatir on 1/13/2016.

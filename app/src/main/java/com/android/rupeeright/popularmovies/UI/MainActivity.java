@@ -1,20 +1,18 @@
 package com.android.rupeeright.popularmovies.UI;
 
-import android.app.FragmentManager;
+
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.rupeeright.popularmovies.R;
 
-import com.android.rupeeright.popularmovies.Util.PopMoviesConstants;
+import com.android.rupeeright.popularmovies.Utils.PopMoviesConstants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /* create the fragment  programatically */
-        android.app.FragmentManager fm = (FragmentManager) this.getFragmentManager();
+        //FragmentManager fm = (FragmentManager) this.getFragmentManager();
+        FragmentManager fm = (FragmentManager) this.getSupportFragmentManager();
         mTaskFragment = (MainActivityFragment) fm.findFragmentByTag(PopMoviesConstants.TAG_TASK_MAIN_FRAGMENT);
 
         // If the Fragment is non-null, then it is currently being
