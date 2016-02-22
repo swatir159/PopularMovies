@@ -1,7 +1,8 @@
 package com.android.rupeeright.popularmovies.UI;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.accounts.Account;
+import android.content.ContentResolver;
+import android.content.SyncStatusObserver;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -12,36 +13,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.rupeeright.popularmovies.DataStorage.MovieContract;
-import com.android.rupeeright.popularmovies.MovieDetailDownloader.PopularMoviesService;
+import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesColumns;
+import com.android.rupeeright.popularmovies.DataSync.MovieDBSyncAdapter;
+import com.android.rupeeright.popularmovies.MovieDetailDownloader.DetailDownloaderService;
 import com.android.rupeeright.popularmovies.R;
-import com.android.rupeeright.popularmovies.Model.Film;
-import com.android.rupeeright.popularmovies.UISupport.ImageAdapter;
 import com.android.rupeeright.popularmovies.UISupport.MovieListAdapter;
 import com.android.rupeeright.popularmovies.UISupport.NoInternetConnectionDialog;
 import com.android.rupeeright.popularmovies.Utils.PopMoviesConstants;
 import com.android.rupeeright.popularmovies.Utils.Utilities;
-import com.android.rupeeright.popularmovies.WebDataFetcher.AsyncDownloader;
-import com.android.rupeeright.popularmovies.WebDataFetcher.MovieDBConnector;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -56,29 +51,69 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     // The Loader's id (this id is specific to the ListFragment's LoaderManager)
     private static final int MOVIELIST_LOADER_ID = 1;
     private static final String[] MOVIELIST_COLUMNS = {
-            MovieContract.MoviesEntry.TABLE_NAME + "." + MovieContract.MoviesEntry._ID,
-            MovieContract.MoviesEntry.TABLE_NAME + "." + MovieContract.MoviesEntry.COLUMN_MOVIE_ID,
-            MovieContract.MoviesEntry.TABLE_NAME + "." + MovieContract.MoviesEntry.COLUMN_POSTER_PATH
+            MoviesColumns.TABLE_NAME + "." + MoviesColumns._ID,
+            MoviesColumns.TABLE_NAME + "." + MoviesColumns.MOVIE_ID,
+            MoviesColumns.TABLE_NAME + "." + MoviesColumns.POSTER_PATH,
+            MoviesColumns.TABLE_NAME + "." + MoviesColumns.TITLE
 
     };
     // indexes of columns in MOVIELIST_COLUMNS  - change synchronously
     public static final int COL_ID = 0;
     public static final int COL_MOVIE_ID = 1;
     public static final int COL_POSTER_PATH = 2;
+    public static final int COL_TITLE = 3;
 
-    //private ImageAdapter mAdapter;
+    private static final String SELECTED_KEY = "selected_position";
     private MovieListAdapter mMovieListAdapter; // Replace ImageAdapter with MovieListAdapter
+    private GridView mGridview;
+    private TextView mHeaderView;
     private int  mImageSize;
     private int  mImageSpacing;
+    private Menu mOptionsMenu;
 
-    //private AsyncDownloader mDownloader;
-    //private ArrayList<Film> mFilmsList;
-
+    private Object mSyncObserverHandle;
 
     public MainActivityFragment() {
-
     }
 
+   /* implementing callbacks to handle single pane or 2 pane display on item click >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+    private Callbacks mCallbacks =sDummyCallbacks;
+    public interface Callbacks {
+        public void onItemSelected(long id);
+    }
+
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onItemSelected(long id){
+        }
+    };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if ( !(context instanceof Callbacks )){
+            throw new IllegalStateException("Activity must implement fragment's callbacks");
+        }
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = sDummyCallbacks;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        mOptionsMenu = menu;
+    }
+
+    public void setActivateOnItemClick(boolean activateOnItemClick){
+        /* set the selected item selected in 2 pane view  TODO*/
+        if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", LOG_TAG + ":" + "setActivateOnItemClick : set Gridview item selected ");
+    }
+    /* <<<<<<<<<<<<<< implementing callbacks to handle single pane or 2 pane display on item click */
 
    @Override
     public void onCreate (Bundle savedInstanceState)
@@ -104,68 +139,114 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         */
     }
-    /* **********
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        String InstanceTagLocal =  PopMoviesConstants.MAIN_ACTIVITY_INSTANCE_TAG;
-        outState.putParcelableArrayList(InstanceTagLocal, mFilmsList);
+        //String InstanceTagLocal =  PopMoviesConstants.MAIN_ACTIVITY_INSTANCE_TAG;
+        //outState.putParcelableArrayList(InstanceTagLocal, mFilmsList);
+        if (mPosition != GridView.INVALID_POSITION){
+            outState.putInt( SELECTED_KEY, mPosition);
+        }
+
         super.onSaveInstanceState(outState);
     }
 
-    *******************************   */
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSyncObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
+            mSyncObserverHandle = null;
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        //mAdapter = new ImageAdapter( (Context)this.getActivity(), mFilmsList);
-        //Create a cursor to create the MovieListAdapter
         Resources Res = getActivity().getResources();
         if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "Inside onCreateView" );
 
         mMovieListAdapter = new MovieListAdapter( (Context)this.getActivity(), null /* getMovielistCursor() */,0 );
 
-
         View rootView;
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         setImageParams();
-        GridView gridview = (GridView) rootView.findViewById(R.id.pomoviepostergridview);
+        mGridview = (GridView) rootView.findViewById(R.id.pomoviepostergridview);
+        //mHeaderView = (TextView) rootView.findViewById(R.id.MovieListHeader);
 
-        gridview.setAdapter(mMovieListAdapter);
+        mGridview.setAdapter(mMovieListAdapter);
         if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "Inside onCreateView after setAdapter " );
 
         mMovieListAdapter.setImageSizeDetails(mImageSize, mImageSpacing);
 
-       gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           public void onItemClick(AdapterView<?> parent, View v,
-                                   int position, long id) {
-               displayToast(v.getContext(), "" + position + " id=<" + id + ">");
-               if (PopMoviesConstants.DEBUG) Log.i( "PopMovies1", LOG_TAG + ":" + " onItemClick: position=<"+ position + "> id=<" + id + ">" );
-               //displayMovieDetails(parent, position);
-               Cursor movieItem = (Cursor) parent.getItemAtPosition(position);
-               Integer selectedMovieDBId = movieItem.getInt(COL_MOVIE_ID);
+        mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                mPosition = position;
 
+                Cursor movieItem = (Cursor) parent.getItemAtPosition(position);
+                int selectedMovieDBId = movieItem.getInt(COL_MOVIE_ID);
+                long selectedMovieId = movieItem.getInt(COL_ID);
+
+                //displayToast(v.getContext(), "" + position + " id=<" + id + "> _ID=(" + selectedMovieId
+                //        + ") MovieDBID = ( " + selectedMovieDBId + ")");
+                if (PopMoviesConstants.DEBUG)
+                    Log.i("PopMovies1", LOG_TAG + ":" + " onItemClick: position=<" + position + "> id=<" + id + ">");
+                //displayMovieDetails(parent, position);
+
+               /* Launch the detail activity ******************************
                String InstanceTagLocal = PopMoviesConstants.DETAIL_ACTIVITY_INSTANCE_TAG;
                Intent intent = new Intent(v.getContext(), MovieDetailActivity.class);
-               intent.putExtra(InstanceTagLocal, selectedMovieDBId);
+               intent.putExtra(InstanceTagLocal, selectedMovieId);
                startActivity(intent);
+                **************************************************** */
+                mCallbacks.onItemSelected(selectedMovieId);
+                if (Utilities.isNetworkAvailable( getActivity()))
+                    initiateTrailernReviewDownload(selectedMovieDBId, selectedMovieId ); // starting the trailer & Review download
 
+            }
+        });
 
-           }
-       });
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
+        {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
         return rootView;
     }
 
+    /* starting intents for review / trailer download  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+    private void initiateTrailernReviewDownload(int movieIDParam, long idParam){
+        /* since we expect that only a few movies will be clicked,, we only want to download the review & trailer data from here */
+        if (PopMoviesConstants.DEBUG) Log.i(getActivity().getResources().getString(R.string.logcat_tag), LOG_TAG + ":" + "++++++++++++++++ inside initiateTraileDownload");
+        Context ctx = getActivity();
+        String MovieExtraTagLocal = PopMoviesConstants.DETAIL_ACTIVITY_TRAILER_TAG;
+        Intent getDetailIntent = new Intent(getActivity(),DetailDownloaderService.class );
+
+        /*
+        Intent alarmIntent = new Intent(ctx, PopularMoviesService.AlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(ctx, 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+        */
+
+
+        getDetailIntent.putExtra(MovieExtraTagLocal,
+                String.valueOf(movieIDParam).trim() + "_" + String.valueOf(idParam).trim());
+        ctx.startService(getDetailIntent);
+    }
+
+
+    /* <<<<<<<<<<<<<< starting intents for review / trailer download */
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-
-        if (id == R.id.action_refresh) {
-            if (PopMoviesConstants.DEBUG) Log.i(getResources().getString(R.string.logcat_tag), getResources().getString(R.string.Message13) );
+       if (id == R.id.action_refresh) {
+           if (PopMoviesConstants.DEBUG) Log.i(getResources().getString(R.string.logcat_tag), getResources().getString(R.string.Message13) );
             //createMovieList();
             downloadMovieData();
             return true;
@@ -173,9 +254,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+
         if (PopMoviesConstants.DEBUG) {
             Log.i(LOG_TAG, "+++ Calling initLoader()! +++");
             if (getLoaderManager().getLoader(MOVIELIST_LOADER_ID) == null) {
@@ -184,7 +266,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 Log.i(LOG_TAG, "+++ Reconnecting with existing Loader (id '1')... +++");
             }
         }
-
         // Initialize a Loader with id '1'. If the Loader with this id already
         // exists, then the LoaderManager will reuse the existing Loader.
         getLoaderManager().initLoader(MOVIELIST_LOADER_ID, null, this);
@@ -192,92 +273,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     }
 
-    /* ********** Loader will handle this ********************************************************************
-    public void updateFilmList(List<Film> FilmListParam)
-    {
-        if ( mFilmsList != null && !mFilmsList.isEmpty())
-        {
-            mFilmsList.clear();
-            mFilmsList = null;
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSyncStatusObserver.onStatusChanged(0);
 
-        int dataSize = FilmListParam.size();
-
-        if (dataSize != 0) {
-            mFilmsList = new ArrayList<Film>(dataSize);
-
-            for (int i = 0; i < dataSize; i++) {
-                mFilmsList.add( FilmListParam.get(i));
-            }
-        }
+        // Watch for sync state changes
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
+                ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        mSyncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
-
-    public void updateAdapter(List<Film> FilmsParam) {
-        mAdapter.setFilms(FilmsParam);
-        mAdapter.notifyDataSetChanged();
-    }
-
-
-
-    private void displayMovieDetails(View v, int position ){
-        String InstanceTagLocal =  PopMoviesConstants.DETAIL_ACTIVITY_INSTANCE_TAG;
-        //Intent intent = new Intent(v.getContext(), DisplayMovieDetailsActivity.class);
-        Intent intent = new Intent(v.getContext(), MovieDetailActivity.class);
-        Film mySelectedFilm = mAdapter.getFilms().get(position);
-        Bundle selectedFilmData = new Bundle();
-        selectedFilmData.putParcelable(InstanceTagLocal, mySelectedFilm);
-        intent.putExtra(InstanceTagLocal, mySelectedFilm);
-        startActivity(intent);
-    }
-
-********************************************************** */
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) ((Context) this.getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            isAvailable = true;
-        }
-
-        return isAvailable;
-    }
-
-    private void initiateDownloadFromWeb() {
-        Resources Res = getActivity().getResources();
-        if (PopMoviesConstants.DEBUG) Log.d(Res.getString(R.string.logcat_tag), Res.getString(R.string.Message4));
-
-        MovieDBConnector url = MovieDBConnector.getInstance();
-        String newSortOrderPref = Utilities.getSortOrderPreference(getActivity());
-
-        url.setmAPIKey(getResources().getString(R.string.themovieDB_api_key));
-        String getMoviesHttpMethod = url.getMoviesQuery(Utilities.getSortByPreference(getActivity())+ "." + Utilities.getSortOrderPreference(getActivity()));
-
-        AsyncDownloader mDownloader = new AsyncDownloader((Context)this.getActivity());
-        mDownloader.execute(getMoviesHttpMethod);
-    }
-
-  /*  private void createMovieList()
-    {
-        if ( !isNetworkAvailable() ){
-            Log.d(getResources().getString(R.string.logcat_tag), getResources().getString(R.string.Message3));
-             noInternetAlertMessage();
-            //displayToast( this.getContext(), "No Network Available");
-        }
-        else
-        {
-            if ( mFilmsList != null && !mFilmsList.isEmpty())
-            {
-                mFilmsList.clear();
-                mFilmsList = null;
-            }
-
-            initiateDownloadFromWeb();
-        }
-    }
-    */
-
 
     /* ************************************************************************ */
     private void displayToast(Context context, String text) {
@@ -310,7 +315,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             final int height = displayMetrics.heightPixels;
             final int width = displayMetrics.widthPixels;
             mImageSize = (height > width ? height : width) / 2;
-            mImageSpacing = (int) (mImageSize*0.05);
+            mImageSpacing = (int) (mImageSize*0.01);
 
         }catch(Exception e)
         {
@@ -319,62 +324,46 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
 
     }
-
-    private Cursor getMovielistCursor(){
-
-        Context c= getContext();
-        String prefSortBy = Utilities.getSortByPreference(c);
-        String prefSortOrder = Utilities.getSortOrderPreference(c);
-        String cursor_sortOrder = "";
-        if (prefSortBy == "Popularity") {
-            cursor_sortOrder = MovieContract.MoviesEntry.COLUMN_POPULARITY;
-        } else if (prefSortBy == "Rating"){
-            cursor_sortOrder = MovieContract.MoviesEntry.COLUMN_VOTE_AVERAGE;
-        }
-
-        if (prefSortBy == "Asc") {
-            cursor_sortOrder = cursor_sortOrder + " ASC";
-        } else if (prefSortBy == "Desc"){
-            cursor_sortOrder = cursor_sortOrder + " DESC";
-        }
-
-        return getActivity().getContentResolver().query(MovieContract.MoviesEntry.CONTENT_URI,
-                null, null, null, cursor_sortOrder);
-
-    }
-
-    /* ***************** Loader callbacks*************************************** */
-
-
+    /*  Loader callbacks implemenation >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // get the user preference from shared preference
         // based on that return the cursor
         // TODO: Implement favourite
         Resources Res = getActivity().getResources();
-        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnCreateLoader" );
+        //if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnCreateLoader" );
 
         Context c= getContext();
         String prefSortBy = Utilities.getSortByPreference(c);
         String prefSortOrder = Utilities.getSortOrderPreference(c);
         String cursor_sortOrder = "";
-        if (prefSortBy == "Popularity") {
-            cursor_sortOrder = MovieContract.MoviesEntry.COLUMN_POPULARITY;
-        } else if (prefSortBy == "Rating"){
-            cursor_sortOrder = MovieContract.MoviesEntry.COLUMN_VOTE_AVERAGE;
+        String cursor_selection = "";
+        if(prefSortBy.equals("Favorite")){
+            cursor_sortOrder = null;
+            cursor_selection = MoviesColumns.TABLE_NAME + "." + MoviesColumns.FAVORITE + " =1";
+        }else{
+            cursor_selection = null;
+            if (prefSortBy.equals("Popularity")) {
+                cursor_sortOrder = MoviesColumns.TABLE_NAME + "." +MoviesColumns.POPULARITY;
+            } else if (prefSortBy.equals("Ratings") ){
+                cursor_sortOrder = MoviesColumns.TABLE_NAME + "." +MoviesColumns.VOTE_AVERAGE;
+            } /* else if (prefSortBy.equals("Favorite")) */
+
+            if (prefSortOrder.equals("Asc")) {
+                cursor_sortOrder = cursor_sortOrder + " ASC";
+            } else if (prefSortOrder.equals("Desc")){
+                cursor_sortOrder = cursor_sortOrder + " DESC";
+            }
+
         }
 
-        if (prefSortBy == "Asc") {
-            cursor_sortOrder = cursor_sortOrder + " ASC";
-        } else if (prefSortBy == "Desc"){
-            cursor_sortOrder = cursor_sortOrder + " DESC";
-        }
-
+        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":"
+                        + "OnCreateLoader: sortOrder=" + cursor_sortOrder  + " selection ="+cursor_selection ) ;
         return new CursorLoader(
                 getActivity(),
-                MovieContract.MoviesEntry.CONTENT_URI,
+                MoviesColumns.CONTENT_URI,
                 MOVIELIST_COLUMNS,
-                null,
+                cursor_selection,
                 null,
                 cursor_sortOrder);
     }
@@ -382,49 +371,103 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Resources Res = getActivity().getResources();
-        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnLoadFinished" );
+        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnLoadFinished + (" + data.getCount() + " ) Records found" );
+
+        if (mPosition != GridView.INVALID_POSITION)
+        {
+            //TODO set gridview position to mPosition - need to check if this works
+            mGridview.setSelection(mPosition);
+        }
+        if (data.getCount() <= 0 ) {
+           // downloadMovieData(); //---- Run this when creating from blank
+           // displayToast(getActivity(), "No data found") ;
+           // if ( mHeaderView != null)
+           //mHeaderView.setText(Res.getString(R.string.no_data_header));
+        }
+        else {
+            //if ( mHeaderView != null)
+            //mHeaderView.setText(Res.getString(R.string.default_movielist_header_text));
+        }
+
 
         mMovieListAdapter.swapCursor(data);
-
-        //mMovieListAdapter.getCursor().getCount();
-        if (mPosition != GridView.INVALID_POSITION) {
-            // If we don't need to restart the loader, and there's a desired position to restore
-            // to, do so now.
-            //mMovieListAdapter.smoothScrollToPosition(mPosition);
-        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Resources Res = getActivity().getResources();
-        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnLoaderReset" );
+       // if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnLoaderReset" );
         mMovieListAdapter.swapCursor(null);
     }
- /* ******************************************************************************  */
-    private void downloadMovieData() {
-
-        Resources Res = getActivity().getResources();
-        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + " downloadMovieData" );
-
-        Intent alarmIntent = new Intent(getActivity(), PopularMoviesService.AlarmReceiver.class);
-        //        alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-
-        //Wrap in a pending intent which only fires once.
-        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0,    alarmIntent,   PendingIntent.FLAG_ONE_SHOT);
-        //getBroadcast(context, 0, i, 0);
-
-        AlarmManager am=(AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-        //Set the AlarmManager to wake up the system.
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+ /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Loader callbacks implemenation  */
 
 
-        //Intent intent = new Intent(getActivity(), PopularMoviesService.class);
-        //intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA,
-        //        Utility.getPreferredLocation(getActivity()));
-        //getActivity().startService(intent);
+    /**
+     * Set the state of the Refresh button. If a sync is active, turn on the ProgressBar widget.
+     * Otherwise, turn it off.
+     *
+     * @param refreshing True if an active sync is occuring, false otherwise
+     */
+     public void setRefreshActionButtonState(boolean refreshing) {
 
+        if (mOptionsMenu == null) {
+            return;
+        }
 
+        final MenuItem refreshItem = mOptionsMenu.findItem(R.id.action_refresh);
+        if (refreshItem != null) {
+            if (refreshing) {
+                refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+            } else {
+                refreshItem.setActionView(null);
+            }
+        }
     }
 
+    /**
+     * Crfate a new anonymous SyncStatusObserver. It's attached to the app's ContentResolver in
+     * onResume(), and removed in onPause(). If status changes, it sets the state of the Refresh
+     * button. If a sync is active or pending, the Refresh button is replaced by an indeterminate
+     * ProgressBar; otherwise, the button itself is displayed.
+     */
+    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
+        /** Callback invoked with the sync adapter status changes. */
+        @Override
+        public void onStatusChanged(int which) {
+            getActivity().runOnUiThread(new Runnable() {
+                /**
+                 * The SyncAdapter runs on a background thread. To update the UI, onStatusChanged()
+                 * runs on the UI thread.
+                 */
+                @Override
+                public void run() {
+                    // Create a handle to the account that was created by
+                    // SyncService.CreateSyncAccount(). This will be used to query the system to
+                    // see how the sync status has changed.
+                    Account account = MovieDBSyncAdapter.getSyncAccount(getActivity());
 
+                    if (account == null) {
+                        // GetAccount() returned an invalid value. This shouldn't happen, but
+                        // we'll set the status to "not refreshing".
+                        setRefreshActionButtonState(false);
+                        return;
+                    }
+
+                    // Test the ContentResolver to see if the sync adapter is active or pending.
+                    // Set the state of the refresh button accordingly.
+                    boolean syncActive = ContentResolver.isSyncActive(
+                            account, PopMoviesConstants.CONTENT_AUTHORITY);
+                    boolean syncPending = ContentResolver.isSyncPending(
+                            account, PopMoviesConstants.CONTENT_AUTHORITY);
+                    setRefreshActionButtonState(syncActive || syncPending);
+                }
+            });
+        }
+    };
+
+    // since we read the settings when we create the loader, all we need to do is restart things
+    void onSettingChanged(String SortBy, String SortOrder ) {
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":" + " OnSettingsChanged");
+        getLoaderManager().restartLoader(MOVIELIST_LOADER_ID, null, this);
+    }
 }

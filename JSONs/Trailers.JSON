@@ -1,0 +1,68 @@
+{
+	"documentation": "The trailer info ",
+	
+	"fields": [
+	{
+      "documentation": "The id of the movie in MovieDB",
+      "name": "movie_id",
+      "type": "Integer",
+      "nullable": false,
+      "foreignKey": {
+        "table": "movies",
+        "onDelete": "CASCADE"
+      }
+   },
+   
+   {
+      "documentation": "The trailer id of the movie like 533ec654c3a36854480003eb ",
+      "name": "trailer_id",
+      "type": "String",
+      "nullable": false,
+      "index": true
+   },
+   
+   {
+      "documentation": "iso language like en",
+      "name": "iso_639_1",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "iso language like SUXWAEX2jlg",
+      "name": "key",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "name of the trailer like Trailer 1",
+      "name": "name",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "size of the trailer like 720",
+      "name": "size",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "Site like youtube",
+      "name": "site",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "type like Trailer",
+      "name": "type",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   }
+   
+	]  
+}	

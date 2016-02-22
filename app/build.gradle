@@ -16,7 +16,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            debuggable true
+        }
     }
+
+
 }
 
 dependencies {
@@ -24,9 +30,30 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    /* the original downloader used to work with this - removed to check if this helps with retrofit 2
+    compile 'com.squareup.okhttp:okhttp:2.4.0' */
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.facebook.stetho:stetho:1.3.0'
     compile 'com.android.support:cardview-v7:+'
+
+    //Retrofit & OkHTTP
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    /*
+    compile ('com.squareup.retrofit2:retrofit:2.0.0-beta4') {
+         exclude module: 'okhttp'  Let us use the default version
+    }
+    compile (group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.1.2', ext: 'pom' )
+    compile (group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2.0.0-beta4', ext: 'pom')
+    */
+    compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
+
+
+    testCompile "junit:junit:$rootProject.ext.junitVersion"
+    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
+    testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
 }

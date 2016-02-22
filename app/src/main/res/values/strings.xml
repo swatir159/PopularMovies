@@ -1,5 +1,9 @@
-<resources>
-    <string name="app_name">PopularMovies</string>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <string name="app_name">Pop Movies</string>
+    <!-- Main fragment UI Texts -->
+    <string name="default_movielist_header_text">Movie List</string>
+    <string name="no_data_header">No data found. Please refresh.</string>
+    <string name="MovieList_header_content_description">Movie List Header; also serves as error display place</string>
     <!-- Detail Fragment UI texts -->
     <string name="default_title_text">Movie Title</string>
     <string name="title_content_description">Movie Title</string>
@@ -13,7 +17,12 @@
     <string name="overview_title">Overview</string>
     <string name="default_review_text">XXX</string>
     <string name="default_author">Unknown</string>
-
+    <string name="trailers_title">Trailers</string>
+    <string name="no_trailers_available">No Trailers available </string>
+    <string name="default_trailer_sec_header">Trailers</string>
+    <string name="trailer_sec_header_content_description">Trailer Section</string>
+    <string name="reviews_title">Review Title</string>
+    <string name="no_reviews_available">No Review available</string>
 
     <string name="default_overview_text">Sunil belongs to a middle-class family, and is intent in pursuing his career with a music group,
     despite of his dad disapproval. Sunil is also in love with Anna, but Anna does not really love him,
@@ -22,6 +31,9 @@
     who receive this news in utter dismay. Will this change Sunil\'s ways?
     Will Anna change her mind about Sunil or will she get married to Chris? </string>
     <string name="overview_content_description">Overview of the Movie</string>
+    <string name="default_review_sec_header">Reviews</string>
+    <string name="review_sec_header_content_description">Review Section</string>
+
 
     <string name="play_button">Play</string>
     <!-- Detail Fragment UI texts Ends-->
@@ -38,7 +50,7 @@
     <string name="no_internet_negative_btn">EXIT</string>
     <string name="no_internet_positive_btn">OKAY</string>
 
-    <string name="title_activity_movie_detail">Movie</string>
+    <string name="title_activity_movie_detail">MovieDetail</string>
 
     <string name="ReleaseDateLabel">Released on: </string>
     <string name="RatingLabel">/10</string>
@@ -53,28 +65,27 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <!--  Strings for Sync Adapter >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+    <string name="sync_account_type">popularmovies</string>
+    <string name ="content_authority">com.android.rupeeright.popularmovies</string>
+    <!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Strings for Sync Adapter -->
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
+    <!-- Notification Format & other notification related stuff -->
+    <string name="format_notification">Movies: <xliff:g id="Title">%1$s</xliff:g> Release date: <xliff:g id="Popularity">%2$s</xliff:g> Low: <xliff:g id="Rating">%3$s</xliff:g></string>
+    <!-- Strings related to Notification Enabled preference -->
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_notifications_label">Movie Notifications</string>
+
+    <string name="pref_enable_notifications_true">Enabled</string>
+    <string name="pref_enable_notifications_false">Not Enabled</string>
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
+    <string name="pref_last_notification">last_notification</string>
+
+    <!-- <<<<<<<<<<<<<<<<<<<<<<<<<< Strings related to Notification preference -->
+
+
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
@@ -112,20 +123,17 @@
 
     <!-- Example settings for Sort By -->
     <string name="pref_header_sort_by">Sort By</string>
-
     <string name="pref_title_sort_by">Select Sort By field</string>
     <string-array name="pref_sort_by_titles">
         <item>Popularity</item>
         <item>Ratings</item>
-
-
-
+        <item>Favorite</item>
     </string-array>
+
     <string-array name="pref_sort_by_values">
         <item>Popularity</item>
         <item>Ratings</item>
-
-
+        <item>Favorite</item>
     </string-array>
 
     <string name="pref_sort_by_key" translatable="false">Sort By</string>

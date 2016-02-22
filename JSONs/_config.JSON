@@ -1,0 +1,13 @@
+{
+    "syntaxVersion": 3,
+    "projectPackageId": "com.android.rupeeright",
+    "authority": "com.android.rupeeright",
+    "providerJavaPackage": "com.android.rupeeright.data",
+    "providerClassName": "MovieDetailProvider",
+    "sqliteOpenHelperClassName": "MovieSQLiteOpenHelper",
+    "sqliteOpenHelperCallbacksClassName": "MovieSQLiteOpenHelperCallbacks",
+    "databaseFileName": "movie.db",
+    "databaseVersion": 2,
+    "enableForeignKeys": true,
+    "useAnnotations": true
+}

@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.rupeeright.popularmovies.R;
 import com.android.rupeeright.popularmovies.UI.MainActivityFragment;
@@ -36,7 +37,7 @@ public class MovieListAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor movieCursor, ViewGroup parent)
     {
-        if (PopMoviesConstants.DEBUG) Log.i("PoMovies1", LOG_TAG + ":"+  "Inside newView");
+        //if (PopMoviesConstants.DEBUG) Log.i("PoMovies1", LOG_TAG + ":"+  "Inside newView");
         View convertView;
         ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -48,6 +49,9 @@ public class MovieListAdapter extends CursorAdapter {
         viewHolder.movieThumbnail.setLayoutParams(new RelativeLayout.LayoutParams(mImageSize, mImageSize));
         viewHolder.movieThumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         viewHolder.movieThumbnail.setPadding(mImageSizeSpacing, mImageSizeSpacing, mImageSizeSpacing, mImageSizeSpacing);
+
+       // viewHolder.mItemId = (TextView) convertView.findViewById(R.id.ivIconId);
+
         convertView.setTag(viewHolder);
 
         return convertView;
@@ -60,7 +64,11 @@ public class MovieListAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
        // if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":"+  "Inside bindView");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
+        viewHolder.movieThumbnail.setContentDescription(cursor.getString(MainActivityFragment.COL_TITLE));
+        /*if (viewHolder.mItemId != null)
+        {
+            viewHolder.mItemId.setText(cursor.getString(MainActivityFragment.COL_MOVIE_ID));
+        }*/
         String posterPathinDB = cursor.getString(MainActivityFragment.COL_POSTER_PATH);
         String posterPath = mBaseURLToFetchImage + mImageSizeToDownload + posterPathinDB;
         //if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", LOG_TAG + ": posterpath="+  posterPath);
@@ -82,6 +90,7 @@ public class MovieListAdapter extends CursorAdapter {
             */
     private static class ViewHolder {
         ImageView movieThumbnail;
+        TextView mItemId;
 
         /*public ViewHolder(View view) {
             movieThumbnail = (ImageView) view.findViewById(R.id.ivIcon);

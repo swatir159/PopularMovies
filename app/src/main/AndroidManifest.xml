@@ -3,7 +3,14 @@
     package="com.android.rupeeright.popularmovies" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Permissions required by the sync adapter -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:name=".Stetho_Debug.PopMoviesApp"
@@ -44,19 +51,54 @@
 
         <provider
             android:name=".DataStorage.MovieDetailProvider"
-            android:authorities="com.android.rupeeright.popularmovies"
-            android:enabled="true"
-            android:exported="true" >
-        </provider>
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
 
         <service
             android:name=".MovieDetailDownloader.PopularMoviesService"
             android:exported="false" >
         </service>
 
-        <receiver
-            android:name=".MovieDetailDownloader.PopularMoviesService$AlarmReceiver"/>
+        <receiver android:name=".MovieDetailDownloader.PopularMoviesService$AlarmReceiver"  />
 
+        <service
+            android:name=".MovieDetailDownloader.DetailsDownloadService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name=".MovieDetailDownloader.DetailDownloaderService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name=".MovieDetailDownloader.ReviewService"
+            android:exported="false" >
+        </service>
+        <service android:name=".DataSync.MovieDBAuthenticatorService" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name=".DataSync.MovieDBSyncService"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>
+                <action android:name="android.accounts.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <service
+            android:name=".MovieDetailDownloader.PopularMoviesService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

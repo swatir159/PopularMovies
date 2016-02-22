@@ -24,16 +24,26 @@ release date
     private String mTitle;
     private String mPosterPath;
     private String mOverview;
-    private float mRating;
+    private double mRating;
     private String mStrRating;
     private String mDate;
     private String mFormattedDate;
     private String mBackdropPath;
 
+    public Boolean getFavorite() {
+        return mFavorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        mFavorite = favorite;
+    }
+
+    private Boolean mFavorite;
+
     public Film() {
     }
 
-    public Film(String IDParam, String TitleParam, String PosterPathParam, String OverViewParam, float RatingParam, String strRatingParam,  String DateParam, String BackdropParam )
+    public Film(String IDParam, String TitleParam, String PosterPathParam, String OverViewParam, double RatingParam, String strRatingParam,  String DateParam, String BackdropParam, Boolean FavParam )
     {
         mID = IDParam;
         mTitle = TitleParam;
@@ -41,8 +51,9 @@ release date
         mOverview = OverViewParam;
         mRating = RatingParam;
         mStrRating = strRatingParam;
-        setFormattedDate( DateParam );
+        mFormattedDate = DateParam ;
         mBackdropPath = BackdropParam;
+       mFavorite= FavParam;
     }
 
 /*
@@ -147,10 +158,10 @@ release date
         this.mOverview = overviewParam;
     }
 
-    public float getRating() {
+    public double getRating() {
         return mRating;
     }
-    public void setRating(float ratingParam) {
+    public void setRating(double ratingParam) {
         this.mRating = ratingParam;
     }
 

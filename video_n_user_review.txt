@@ -1,0 +1,59 @@
+RETROFIT example from github
+
+
+
+Status code : https://www.themoviedb.org/documentation/api/status-codes
+
+
+http://api.themoviedb.org/3/discover/movie?sort_by=popularity.asc&api_key=a06a137818569958a0f7a1299a22809e
+************************************************************************
+
+http://api.themoviedb.org/3/movie/135397/videos?api_key=a06a137818569958a0f7a1299a22809e
+http://api.themoviedb.org/3/movie/118340/videos?api_key=a06a137818569958a0f7a1299a22809e
+
+{"id":118340,
+"results":[
+	{"id":"53b47955c3a3682ee2009d93","iso_639_1":"en","key":"XT4CLuTbI7A","name":"International Trailer","site":"YouTube","size":720,"type":"Trailer"},	{"id":"53db9d59c3a36821cc000d92","iso_639_1":"en","key":"2LIQ2-PZBC8","name":"Trailer #2","site":"YouTube","size":720,"type":"Trailer"},	{"id":"53db9d72c3a36821c7000dbe","iso_639_1":"en","key":"d96cjJhvlMA","name":"Trailer #1","site":"YouTube","size":720,"type":"Trailer"},	{"id":"53ddf4fec3a3686c56000c87","iso_639_1":"en","key":"HeFCpSqfMjU","name":"\"Gamora & Nebula\" Featurette (2014) Zoe Saldana","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf52dc3a3686c49000ce5","iso_639_1":"en","key":"Zfw-3JWZWeo","name":"\"IMAX\" Featurette (2014) James Gunn","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf557c3a3686c5a000c9e","iso_639_1":"en","key":"vGcmJFVbO4M","name":"\"Gamora and Drax\" Featurette (2014) Zoe Saldana, Dave Bautista","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf573c3a3686c49000cee","iso_639_1":"en","key":"AY9v32eVXEo","name":"\"Peter Quill\" Featurette (2014) Chris Pratt","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf598c3a3686c5d000d4b","iso_639_1":"en","key":"T1hS3yYMU-g","name":"\"Definitive Anti Hero\" Featurette (2014) Marvel","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf5bdc3a3686c4d000d3e","iso_639_1":"en","key":"kKFlUPKiWHc","name":"\"Blast Off\" Featurette (2014) Chris Pratt, Vin Diesel","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf5e0c3a3686c45000ca0","iso_639_1":"en","key":"O4cTR4CT3Us","name":"\"Meet Groot\" Featurette Vin Diesel","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf609c3a3686c49000cf7","iso_639_1":"en","key":"FkoCZRLfU7o","name":"\"Meet Star Lord\" Featurette Chris Pratt","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf624c3a3686c56000c96","iso_639_1":"en","key":"n5VeE7fYeYw","name":"\"Meet Rocket Raccoon\" Featurette Bradley Cooper","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf63cc3a3686c45000ca8","iso_639_1":"en","key":"dP5k7YFVKS8","name":"\"Meet Gamora\" Featurette Zoe Saldana","site":"YouTube","size":720,"type":"Featurette"},	{"id":"53ddf655c3a3686c60000c52","iso_639_1":"en","key":"UbMIRcZzvVU","name":"\"Meet Drax\" Featurette Dave Bautista","site":"YouTube","size":720,"type":"Featurette"}
+]
+}
+
+
+************************************************************
+
+
+http://api.themoviedb.org/3/movie/118340/reviews?api_key=a06a137818569958a0f7a1299a22809e
+
+{
+"id":118340,
+"page":1,
+"results":[
+	{
+	"id":"53f11b7c0e0a2675b8004053",
+	"author":"Binawoo",
+	"content":"This movie was so AWESOME! I loved it all and i had a bad day before watching it but it turned it around. I love action packed movies and this was great.",
+	"url":"http://j.mp/YlRX45"
+	},
+	{
+	"id":"53f11c0b0e0a2675ac003e7d",
+	"author":"Andres Gomez",
+	"content":"Really funny and with great spcial effects. Probably, one of the movies not to miss this year.",
+	"url":"http://j.mp/1rK5avZ"
+	},
+	{"id":"53fafb790e0a267a7b006e20",
+	"author":"Eazyryda",
+	"content":"I ?M G????!",
+	"url":"http://j.mp/VKl6Eo"},
+	{"id":"5459072dc3a36839ac001d55",
+	"author":"Grant English",
+	"content":"This was a pleasant surprise of a movie, full of great humor as well as an intriguing story.  It's quick and zany at times.  Think <em>Psych</em> in space (back when Psych was funny).  The pace is quick and the story line is easy to pick up and follow.\r\n\r\nWhat makes the film work is something that early Lucas and Joss Whedon understand:  great sci-fi movies are really westerns at heart.  There is a relationship with nature, a broken, compromised hero, a deep necessity for teamwork, and the story happens OUT there in the wild.  <em>Guardians of the Galaxy</em> has ALL of this.  \r\n\r\n<em>Guardians</em> is already set up for a sequel so we will see if Marvel can continue the magic.  It's a great addition to the Marvel universe.",
+	"url":"http://j.mp/1yV7B38"},
+	{
+	"id":"5488c29bc3a3686f4a00004a",
+	"author":"Travis Bell",
+	"content":"Like most of the reviews here, I agree that Guardians of the Galaxy was an absolute hoot. Guardians never takes itself too seriously which makes this movie a whole lot of fun.\r\n\r\nThe cast was perfectly chosen and even though two of the main five were CG, knowing who voiced and acted alongside them completely filled out these characters.\r\n\r\nGuardians of the Galaxy is one of those rare complete audience pleasers. Good fun for everyone!",
+	"url":"http://j.mp/1wi56Ym"}
+],
+
+	"total_pages":1,
+	"total_results":5
+}

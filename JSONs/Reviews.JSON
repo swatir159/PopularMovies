@@ -1,0 +1,54 @@
+{
+	"documentation": "The Review info" , 
+	
+	"fields": [
+	{
+      "documentation": "The id of the movie in MovieDB",
+      "name": "movie_id",
+      "type": "Integer",
+      "nullable": false,
+      "foreignKey": {
+        "table": "movies",
+        "onDelete": "CASCADE"
+      }
+   },
+   
+   {
+      "documentation": "The review id of the movie like 5010553819c2952d1b000451 ",
+      "name": "review_id",
+      "type": "String",
+      "nullable": false,
+	   "index": true,
+      
+   },
+   
+   {
+      "documentation": "author of the review like Travis Bell",
+      "name": "author" ,
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "actual review content  ",
+      "name": "content",
+      "type": "String",
+      "nullable": false,
+      "index": false
+   },
+   {
+      "documentation": "url of the review like http://j.mp/QSjAK2 ",
+      "name": "url", 
+      "type": "String",
+      "nullable": false,
+      "index": false
+   }
+   
+ ],
+  "constraints": [
+    {
+      "name": "unique_reivew_url",
+      "definition": "UNIQUE (url) ON CONFLICT IGNORE"
+    }
+    ]
+}

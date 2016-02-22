@@ -1,0 +1,99 @@
+{
+    "documentation": "Details about the movies received from theMovieDB",
+        
+    "fields": [
+    {
+      "documentation": "The id of the movie in MovieDB",
+      "name": "movie_id",
+      "type": "Integer",
+      "nullable": false,
+      "index": true
+  },
+    {
+      "name": "title",
+      "type": "String",
+      "nullable": false,
+      "index": true
+  },
+    {
+      "name": "poster_path",
+      "type": "String",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "overview",
+      "type": "String",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "vote_average",
+      "type": "Double",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "release_date",
+      "type": "Long",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "backdrop_path",
+      "type": "String",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "original_language",
+      "type": "String",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "original_title",
+      "type": "String",
+      "nullable": true,
+      "index": false
+  },
+    {
+      "name": "popularity",
+      "type": "Double",
+      "nullable": true,
+      "index": false
+  },
+  {
+      "name": "video",
+      "type": "Boolean",
+      "nullable": true,
+      "index": false
+  },
+  {
+      "name": "vote_count",
+      "type": "Double",
+      "nullable": true,
+      "index": false
+  },
+  {
+      "name": "adult",
+      "type": "boolean",
+      "nullable": true,
+      "index": false
+  },
+  {
+      "name": "favorite",
+      "type": "boolean",
+      "nullable": false,
+      "index": false
+  }
+  
+  
+ ],
+  "constraints": [
+    {
+      "name": "unique_movie_id",
+      "definition": "UNIQUE (movie_id) ON CONFLICT REPLACE"
+        }
+    ]
+}
