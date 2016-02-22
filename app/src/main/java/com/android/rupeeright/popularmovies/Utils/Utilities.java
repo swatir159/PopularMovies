@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.android.rupeeright.popularmovies.DataStorage.MovieDBHelper;
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesCursor;
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesSelection;
+import com.android.rupeeright.popularmovies.MovieDetailDownloader.PopularMoviesService;
 import com.android.rupeeright.popularmovies.R;
 import com.android.rupeeright.popularmovies.UISupport.NoInternetConnectionDialog;
 
@@ -53,7 +54,7 @@ public class Utilities {
 
         return isAvailable;
     }
-/*
+
     public static void downloadMovieData(Context ctx, String LOG_TAG, FragmentManager dlgFragment) {
 
         Resources Res = ctx.getResources();
@@ -77,7 +78,7 @@ public class Utilities {
             // MovieDBSyncAdapter.syncImmediately(getActivity());
         }
     }
-*/
+
     public static String getSortByPreference (Context context) {
         String sortPrefKey = context.getString(R.string.pref_sort_by_key);
         String sortPrefKeyDef = context.getString(R.string.sort_pref_key_default);

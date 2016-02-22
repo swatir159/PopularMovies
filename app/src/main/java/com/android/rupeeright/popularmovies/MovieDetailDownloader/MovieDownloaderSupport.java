@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesColumns;
+import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesContentValues;
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesCursor;
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesSelection;
 import com.android.rupeeright.popularmovies.DataStorage.reviews.ReviewsColumns;
@@ -225,7 +226,7 @@ public class MovieDownloaderSupport {
 
         }
         else {
-            if (PopMoviesConstants.DEBUG) Log.i("PopMovies", LOG_TAG + ":" +  " no records inserted - blank array");
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies", LOG_TAG + ":" + " no records inserted - blank array");
         }
 
         return moviesOutput.getTotalPages();
@@ -260,26 +261,33 @@ public class MovieDownloaderSupport {
                 if (to == null){ /* error */}
                 else{
                     int idFromParam = to.getId();
-                    long localDBId = GetLocalDBIdfromMovieDBId(idFromParam);
-                    List<TrailerJSON> trailers = to.getResults();
-                    if( trailers !=null && trailers.size() >0 ) {
-                        for(TrailerJSON trailer: trailers)
-                        {
-                            TrailersContentValues t = new TrailersContentValues();
-                            t.putTrailerId( trailer.getId() );
-                            t.putMovieId(localDBId );
-                            t.putMoviedbId(idFromParam);
-                            t.putIso6391(trailer.getIso6391());
-                            t.putKey(trailer.getKey());
-                            t.putName(trailer.getName());
-                            t.putSite(trailer.getSite());
-                            t.putType(trailer.getType());
-                            t.putSize(trailer.getSize());
-                            tCV[inc++] = t.values();
-                        }
+                    long localDBId ;
+                    try
+                    {
+                        localDBId = GetLocalDBIdfromMovieDBId(idFromParam);
+                        List<TrailerJSON> trailers = to.getResults();
+                        if (trailers != null && trailers.size() > 0) {
+                            for (TrailerJSON trailer : trailers) {
+                                TrailersContentValues t = new TrailersContentValues();
 
-                    }else {
-                    /* error */
+                                t.putTrailerId(trailer.getId());
+                                t.putMovieId(localDBId);
+                                t.putMoviedbId(idFromParam);
+                                t.putIso6391(trailer.getIso6391());
+                                t.putKey(trailer.getKey());
+                                t.putName(trailer.getName());
+                                t.putSite(trailer.getSite());
+                                t.putType(trailer.getType());
+                                t.putSize(trailer.getSize());
+                                tCV[inc++] = t.values();
+                            }
+
+                        } else {
+                        /* error */
+                        }
+                    }catch(NullPointerException e){
+                        /* movie id is null */
+                        if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", " Null _ID from DB for movie id =" + idFromParam);
                     }
                 }
             }
@@ -336,25 +344,30 @@ public class MovieDownloaderSupport {
             {
                 ReviewOutputJSON to = data[i];
                 if (to == null){ /* error */}
-                else{
+                else {
                     int idFromParam = to.getId();
-                    long localDBId = GetLocalDBIdfromMovieDBId(idFromParam);
-                    List<ReviewJSON> reviews = to.getResults();
-                    if( reviews !=null && reviews.size() >0 ) {
-                        for(ReviewJSON review: reviews)
-                        {
-                            ReviewsContentValues t = new ReviewsContentValues();
-                            t.putReviewId(review.getId());
-                            t.putMovieId(localDBId);
-                            t.putMoviedbId(idFromParam);
-                            t.putAuthor(review.getAuthor());
-                            t.putContent(review.getContent());
-                            t.putUrl(review.getUrl());
-                            tCV[inc++] = t.values();
-                        }
+                    try
+                    {
+                        long localDBId = GetLocalDBIdfromMovieDBId(idFromParam);
+                        List<ReviewJSON> reviews = to.getResults();
+                        if (reviews != null && reviews.size() > 0) {
+                            for (ReviewJSON review : reviews) {
+                                ReviewsContentValues t = new ReviewsContentValues();
+                                t.putReviewId(review.getId());
+                                t.putMovieId(localDBId);
+                                t.putMoviedbId(idFromParam);
+                                t.putAuthor(review.getAuthor());
+                                t.putContent(review.getContent());
+                                t.putUrl(review.getUrl());
+                                tCV[inc++] = t.values();
+                            }
 
-                    }else {
-                    /* error */
+                        } else {
+                            /* error */
+                        }
+                    }catch(NullPointerException e){
+                           /* movie id is null */
+                        if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", " Null _ID from DB for movie id =" + idFromParam);
                     }
                 }
             }
@@ -422,12 +435,12 @@ public class MovieDownloaderSupport {
     }
 
     private ContentValues createContentValueFromMovie(MovieJSON movie){
-        ContentValues movieData = new ContentValues();
-        movieData.put(MoviesColumns.MOVIE_ID, movie.getId());
-        movieData.put(MoviesColumns.TITLE, movie.getTitle());
-        movieData.put( MoviesColumns.POSTER_PATH  , movie.getPosterPath());
-        movieData.put( MoviesColumns.OVERVIEW , movie.getOverview());
-        movieData.put( MoviesColumns.VOTE_AVERAGE   ,movie.getVoteAverage());
+        MoviesContentValues movieData = new MoviesContentValues();
+        movieData.putMovieId(movie.getId());
+        movieData.putTitle(movie.getTitle());
+        movieData.putPosterPath(movie.getPosterPath());
+        movieData.putOverview(movie.getOverview());
+        movieData.putVoteAverage(movie.getVoteAverage());
 
         Long releaseDateLocal = 0L;
         try {
@@ -435,17 +448,18 @@ public class MovieDownloaderSupport {
         }catch(ParseException e){
 
         }
-        movieData.put( MoviesColumns.RELEASE_DATE  , releaseDateLocal);
-        movieData.put( MoviesColumns.BACKDROP_PATH  , movie.getBackdropPath());
-        movieData.put(MoviesColumns.ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
-        movieData.put(  MoviesColumns.ORIGINAL_TITLE , movie.getOriginalTitle());
-        movieData.put(MoviesColumns.POPULARITY, movie.getPopularity());
-        movieData.put( MoviesColumns.VIDEO , movie.getVideo());
-        movieData.put(MoviesColumns.VOTE_COUNT   , movie.getVoteCount());
-        movieData.put(MoviesColumns.ADULT   , movie.getAdult());
-        movieData.put(MoviesColumns.FAVORITE   , 0);
+        movieData.putReleaseDate(releaseDateLocal);
+        movieData.putBackdropPath(movie.getBackdropPath());
+        movieData.putOriginalLanguage(movie.getOriginalLanguage());
+        movieData.putOriginalTitle(movie.getOriginalTitle());
+        double poularity = (double)movie.getPopularity();
+        movieData.putPopularity(poularity );
+        movieData.putVideo(movie.getVideo());
+        movieData.putVoteCount((double) movie.getVoteCount());
+        movieData.putAdult(movie.getAdult());
+        movieData.putFavorite(Boolean.FALSE);
 
-        return movieData;
+        return movieData.values();
     }
 
 

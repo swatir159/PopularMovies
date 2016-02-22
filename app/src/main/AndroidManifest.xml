@@ -62,18 +62,12 @@
 
         <receiver android:name=".MovieDetailDownloader.PopularMoviesService$AlarmReceiver"  />
 
-        <service
-            android:name=".MovieDetailDownloader.DetailsDownloadService"
-            android:exported="false" >
-        </service>
+
         <service
             android:name=".MovieDetailDownloader.DetailDownloaderService"
             android:exported="false" >
         </service>
-        <service
-            android:name=".MovieDetailDownloader.ReviewService"
-            android:exported="false" >
-        </service>
+
         <service android:name=".DataSync.MovieDBAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

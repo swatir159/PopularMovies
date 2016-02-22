@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         if (id == R.id.action_refresh) {
             if (PopMoviesConstants.DEBUG) Log.i(getResources().getString(R.string.logcat_tag), getResources().getString(R.string.Message13) );
             //createMovieList();
-            //Utilities.downloadMovieData(this, LOG_TAG, getSupportFragmentManager()) ;
-            MovieDBSyncAdapter.syncImmediately(this);
+            Utilities.downloadMovieData(this, LOG_TAG, getSupportFragmentManager()) ;
+            //MovieDBSyncAdapter.syncImmediately(this);
             return true;
         }
 

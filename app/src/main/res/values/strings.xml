@@ -33,7 +33,8 @@
     <string name="overview_content_description">Overview of the Movie</string>
     <string name="default_review_sec_header">Reviews</string>
     <string name="review_sec_header_content_description">Review Section</string>
-
+    <string name="default_end_marker_text">THE END</string>
+    <string name="end_marker_content_description">End of Movie Detail</string>
 
     <string name="play_button">Play</string>
     <!-- Detail Fragment UI texts Ends-->

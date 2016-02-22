@@ -281,7 +281,13 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_movie_detail, menu);
+
+        if (this.getActivity() instanceof MainActivity)
+        {
+            //two pane window
+            inflater.inflate(R.menu.movie_menu_detail_fragment, menu);
+        }
+        else inflater.inflate(R.menu.menu_movie_detail, menu);
         MenuItem id = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(id);
         super.onCreateOptionsMenu(menu, inflater);

@@ -199,6 +199,11 @@ public class TrailerPagerAdapter extends PagerAdapter {
                 public void onClick(View v) {
                     Activity activity = (Activity) TrailerPagerAdapter.getmContext();
                     String youtubeId = (String) v.getTag();
+
+                    if ( !Utilities.isNetworkAvailable(activity)){
+                        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "No Network available. So not attempting to start video intents.");
+                        return;
+                    }
                     if (PopMoviesConstants.DEBUG)
                         Log.i("PopMovies1", LOG_TAG + ":" + " Starting youtube intent ");
 
