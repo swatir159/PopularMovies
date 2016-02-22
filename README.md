@@ -51,4 +51,6 @@ https://futurestud.io/blog/retrofit-getting-started-and-android-client
 Code cleaning 
 Code optimization to enhance performance
 TestCase writing for unit & integration test
+Bug Fixing ( a. Sending null values to database insertion 
+Do testing on actual device 
 
