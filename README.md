@@ -54,3 +54,5 @@ TestCase writing for unit & integration test
 Bug Fixing ( a. Sending null values to database insertion 
 Do testing on actual device 
 
+Note to the Instructor:
+To add your own api_key please go to res/values/config.xml
