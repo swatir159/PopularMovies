@@ -153,6 +153,7 @@
         <item>Desc</item>
     </string-array>
 
-
+<!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END OF P2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+    <string name="no_movie_available">No movie available</string>
 
 </resources>

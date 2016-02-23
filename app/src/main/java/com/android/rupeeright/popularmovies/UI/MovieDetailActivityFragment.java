@@ -157,6 +157,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
         if (PopMoviesConstants.DEBUG) Log.i(getResources().getString(R.string.logcat_tag),  " onCreate");
 
         /* handle the config chnages */
@@ -173,6 +174,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         if(savedMovieId != -1) {
             mRecdFilmID = savedMovieId;
             //showDetailsByMovieDBId(mMovieDBId);
+            Loader<Object> loader = getLoaderManager().getLoader(MOVIEITEM_LOADER_ID);
+            if (loader != null && ! loader.isReset()) {
+                getLoaderManager().restartLoader(MOVIEITEM_LOADER_ID, null, this);
+            }
         }
     }
 
