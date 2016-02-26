@@ -45,8 +45,8 @@ public class PopMoviesConstants {
     public static final int MOVIE_DATA_RETENTION_DAYS = 365;
 
     /* for getting the data from the movie db - in order to restrict the data download these are invented. */
-    public static final int NO_OF_PAGES_TO_DOWNLOAD = 2;
-    public static final int PRIMARY_RELEASE_YEAR_TO_GET_DATA = 2016;
+    public static final int NO_OF_PAGES_TO_DOWNLOAD = 5;
+    public static final int PRIMARY_RELEASE_YEAR_TO_GET_DATA = 2015;
 
 
     public static final String CONTENT_AUTHORITY = "com.android.rupeeright.popularmovies";

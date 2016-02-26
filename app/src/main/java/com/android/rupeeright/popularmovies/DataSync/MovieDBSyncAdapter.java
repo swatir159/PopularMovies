@@ -156,6 +156,7 @@ public class MovieDBSyncAdapter extends AbstractThreadedSyncAdapter {
      * @return a fake account.
      */
     public static Account getSyncAccount(Context context) {
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " starting getSyncAccount");
         // Get an instance of the Android account manager
         AccountManager mAccountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
@@ -172,6 +173,7 @@ public class MovieDBSyncAdapter extends AbstractThreadedSyncAdapter {
          * If successful, return the Account object, otherwise report an error.
          */
             if (!mAccountManager.addAccountExplicitly(newAccount, "", null)) {
+                if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " No account added. Return null");
                 return null;
             }
             /*
@@ -180,13 +182,16 @@ public class MovieDBSyncAdapter extends AbstractThreadedSyncAdapter {
              * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
              * here.
              */
-
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " Account added");
             onAccountCreated(newAccount, context);
+        } else{
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " Account password obtained");
         }
         return newAccount;
     }
 
     private static void onAccountCreated(Account newAccount, Context context) {
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " starting onAccountCreated");
         /*
          * Since we've created an account
          */
@@ -200,8 +205,8 @@ public class MovieDBSyncAdapter extends AbstractThreadedSyncAdapter {
         /*
          * Finally, let's do a sync to get things started
          */
-        if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", LOG_TAG + ":" + "onaccountadded");
-        syncImmediately(context);
+        //if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", LOG_TAG + ":" + "onaccountadded");
+        //syncImmediately(context);
     }
 
     public static void initializeSyncAdapter(Context context) {

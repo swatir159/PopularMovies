@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesCursor;
 import com.android.rupeeright.popularmovies.DataStorage.movies.MoviesSelection;
+import com.android.rupeeright.popularmovies.DataStorage.reviews.ReviewsColumns;
 import com.android.rupeeright.popularmovies.DataStorage.reviews.ReviewsContentValues;
 import com.android.rupeeright.popularmovies.DataStorage.trailers.TrailersColumns;
 import com.android.rupeeright.popularmovies.DataStorage.trailers.TrailersContentValues;
@@ -130,7 +131,7 @@ public class MovieDBExtraInfoDownloadService {
                 reviewValues[inc++] = t.values();
             }
 
-            return this.getmContext().getContentResolver().bulkInsert(TrailersColumns.CONTENT_URI, reviewValues);
+            return this.getmContext().getContentResolver().bulkInsert(ReviewsColumns.CONTENT_URI, reviewValues);
         }
         else {
             if (PopMoviesConstants.DEBUG)

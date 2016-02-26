@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -428,7 +429,9 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 /* return all information about the selected movie id */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri initLoaderUri = Uri.withAppendedPath(MoviesColumns.CONTENT_URI, String.valueOf(mRecdFilmID));
+
+        Uri initLoaderUri = Uri.withAppendedPath(MoviesColumns.CONTENT_URI, "/Details/" + String.valueOf(mRecdFilmID));
+
         if (PopMoviesConstants.DEBUG) Log.i(getResources().getString(R.string.logcat_tag), LOG_TAG + ":" + "Selected film ("+ mRecdFilmID + ") calling Uri = " + initLoaderUri);
         return new CursorLoader(
                 getActivity(),    /* Context */
@@ -680,8 +683,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                     if (inc == 0 )
                     {
                         // add header text
+                        mReviewSection.setOrientation(LinearLayout.VERTICAL);
+
                         TextView reviewTitle = new TextView(getActivity());
-                        reviewTitle.setText(getString(R.string.reviews_title));
+
                         LinearLayout.LayoutParams textViewLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         textViewLayoutParams.setMargins(pixelSizeFromDP(getActivity(), 15), 0, 0, pixelSizeFromDP(getActivity(), 10));
                         reviewTitle.setLayoutParams(textViewLayoutParams);
@@ -693,23 +698,35 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                             reviewTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, PopMoviesConstants.header_text_size);
                             reviewTitle.setBackgroundColor(PopMoviesConstants.data_available_backgroud);
                         }
-
+                        reviewTitle.setText(getString(R.string.reviews_title));
                         mReviewSection.addView(reviewTitle);
-                        reviewTitle.setVisibility(View.VISIBLE);
+                        //reviewTitle.setVisibility(View.VISIBLE);
                         if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":" + "Header Note added");
 
                     }
                     //reviewSet.add(reviewURL);
                     /* @SuppressLint("InflateParams") */
+                    String author = reviewCursor.getAuthor();
+                    String content = /* reviewCursor.getReviewId()+ "\n" + */ reviewCursor.getContent() + "\n" + reviewURL;
+
+                    if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":"  + "Will add Review Note = (" + inc + ") author "
+                                                + author + " text = " + content);
+                    LinearLayout.LayoutParams tvlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     reviewItemView = getActivity().getLayoutInflater().inflate(R.layout.review_item, null);
                     TextView authorTextView = (TextView) reviewItemView.findViewById(R.id.review_author);
                     TextView contentTextView = (TextView) reviewItemView.findViewById(R.id.review_text);
-                    authorTextView.setText(reviewCursor.getAuthor());
-                    contentTextView.setText(reviewCursor.getContent());
+                    //authorTextView.setLayoutParams(tvlp);
+                    //contentTextView.setLayoutParams(tvlp);
+                    authorTextView.setText(author);
+                    contentTextView.setText(content);
+
                     if (inc%2==0 ) reviewItemView.setBackgroundColor(PopMoviesConstants.data_available_backgroud);
                     else reviewItemView.setBackgroundColor(0);
+
                     reviewItemView.setVisibility(View.VISIBLE);
+
                     mReviewSection.addView(reviewItemView);
+
                     if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "(" + inc + ") Note added");
                 }
                 else{
@@ -720,10 +737,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         //reviewCursor.close();
 
         if(mReviewSection.getChildCount() > 0) {
-
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "(" + mReviewSection.getChildCount() + " ) reviews added" );
         } else {
             TextView reviewNAText = new TextView(getActivity());
-            reviewNAText.setText(getString(R.string.no_reviews_available));
+
             LinearLayout.LayoutParams textViewLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                                                                     ViewGroup.LayoutParams.WRAP_CONTENT);
             textViewLayoutParams.setMargins(
@@ -739,13 +756,15 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 reviewNAText.setTextSize(TypedValue.COMPLEX_UNIT_SP, PopMoviesConstants.header_text_size);
                 reviewNAText.setBackgroundColor(PopMoviesConstants.data_not_available_backgroud);
             }
-            mReviewSection.addView(reviewNAText);
+            reviewNAText.setText(getString(R.string.no_reviews_available));
             reviewNAText.setVisibility(View.VISIBLE);
-            mReviewSection.setVisibility(View.VISIBLE);
+            mReviewSection.addView(reviewNAText);
+
+
             if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":" + "No Data Header Note added");
         }
         if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":" + "Review data loading complete");
-
+        mReviewSection.setVisibility(View.VISIBLE);
     }
 
     private int displayMovieData( MoviesCursor data) {

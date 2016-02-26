@@ -15,10 +15,10 @@
     <string name="original_language_content_description">Dummy Text</string>
     <string name="release_date_content_decription">Release Date</string>
     <string name="overview_title">Overview</string>
-    <string name="default_review_text">XXX</string>
+    <string name="default_review_text">Kung Fu Panda has not dissapointed me. The vilaaains are not scary. My son, who is nine yearrs old enjoyed it thoroughly</string>
     <string name="default_author">Unknown</string>
     <string name="trailers_title">Trailers</string>
-    <string name="no_trailers_available">No Trailers available </string>
+    <string name="no_trailers_available">No Trailer available </string>
     <string name="default_trailer_sec_header">Trailers</string>
     <string name="trailer_sec_header_content_description">Trailer Section</string>
     <string name="reviews_title">Review Title</string>
@@ -154,6 +154,6 @@
     </string-array>
 
 <!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END OF P2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
-    <string name="no_movie_available">No movie available</string>
+    <string name="no_movie_available">No Movie Available</string>
 
 </resources>

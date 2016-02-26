@@ -45,4 +45,18 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="element_style_big">
+        <item name="android:paddingLeft">@dimen/element_padding_left_big</item>
+        <item name="android:paddingRight">@dimen/element_padding_right_big</item>
+        <item name="android:paddingTop">@dimen/element_padding_top_big</item>
+        <item name="android:paddingBottom">@dimen/element_padding_bottom_big</item>
+
+        <item name="android:layout_marginLeft">@dimen/element_margin_left_big</item>
+        <item name="android:layout_marginRight">@dimen/element_margin_right_big</item>
+        <item name="android:layout_marginBottom">@dimen/element_margin_bottom_big</item>
+        <item name="android:layout_marginTop">@dimen/element_margin_top_big</item>
+
+    </style>
+
 </resources>

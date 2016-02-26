@@ -8,4 +8,14 @@
     <dimen name="action_button_min_width">56dp</dimen>
     <dimen name="indeterminate_progress_size">32dp</dimen>
 
+    <dimen name="element_padding_left_big">15dp</dimen>
+    <dimen name="element_padding_right_big">15dp</dimen>
+    <dimen name="element_padding_top_big">15dp</dimen>
+    <dimen name="element_padding_bottom_big">15dp</dimen>
+
+    <dimen name="element_margin_left_big">15dp</dimen>
+    <dimen name="element_margin_right_big">15dp</dimen>
+    <dimen name="element_margin_top_big">15dp</dimen>
+    <dimen name="element_margin_bottom_big">15dp</dimen>
+
 </resources>

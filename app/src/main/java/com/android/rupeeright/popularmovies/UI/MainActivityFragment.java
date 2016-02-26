@@ -66,10 +66,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final String SELECTED_KEY = "selected_position";
     private MovieListAdapter mMovieListAdapter; // Replace ImageAdapter with MovieListAdapter
     private GridView mGridview;
-    private TextView mHeaderView;
+    private TextView  mAlternateView;
     private int  mImageSize;
     private int  mImageSpacing;
     private Menu mOptionsMenu;
+
 
     private Object mSyncObserverHandle;
 
@@ -122,6 +123,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), Res.getString(R.string.DebugMsg2) );
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        /* handling orientation changes */
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)){
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
 
         /* Now that we get the film list from Loader, we do not need to manage the instance anymore
         setRetainInstance(true);
@@ -174,12 +179,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         setImageParams();
         mGridview = (GridView) rootView.findViewById(R.id.pomoviepostergridview);
         //mHeaderView = (TextView) rootView.findViewById(R.id.MovieListHeader);
-
+        mAlternateView = (TextView) rootView.findViewById(R.id.empty_grid_view);
+        mGridview.setEmptyView(  mAlternateView );
         mGridview.setAdapter(mMovieListAdapter);
-        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "Inside onCreateView after setAdapter " );
+        if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "Inside onCreateView after setAdapter ");
 
         mMovieListAdapter.setImageSizeDetails(mImageSize, mImageSpacing);
 
+        if ( mPosition!= GridView.INVALID_POSITION)
+        {
+            mGridview.setSelection(mPosition);
+        }
         mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -202,8 +212,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                startActivity(intent);
                 **************************************************** */
                 mCallbacks.onItemSelected(selectedMovieId);
-                if (Utilities.isNetworkAvailable( getActivity()))
-                    initiateTrailernReviewDownload(selectedMovieDBId, selectedMovieId ); // starting the trailer & Review download
+               // if (Utilities.isNetworkAvailable( getActivity()))
+               //     initiateTrailernReviewDownload(selectedMovieDBId, selectedMovieId ); // starting the trailer & Review download
 
             }
         });
@@ -370,27 +380,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+       mMovieListAdapter.swapCursor(data);
+
         Resources Res = getActivity().getResources();
         if (PopMoviesConstants.DEBUG) Log.i( Res.getString(R.string.logcat_tag), LOG_TAG + ":" + "OnLoadFinished + (" + data.getCount() + " ) Records found" );
-
         if (mPosition != GridView.INVALID_POSITION)
         {
             //TODO set gridview position to mPosition - need to check if this works
             mGridview.setSelection(mPosition);
         }
-        if (data.getCount() <= 0 ) {
-           // downloadMovieData(); //---- Run this when creating from blank
-           // displayToast(getActivity(), "No data found") ;
-           // if ( mHeaderView != null)
-           //mHeaderView.setText(Res.getString(R.string.no_data_header));
-        }
-        else {
-            //if ( mHeaderView != null)
-            //mHeaderView.setText(Res.getString(R.string.default_movielist_header_text));
-        }
-
-
-        mMovieListAdapter.swapCursor(data);
+        updateEmptyView();
     }
 
     @Override
@@ -470,4 +469,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":" + " OnSettingsChanged");
         getLoaderManager().restartLoader(MOVIELIST_LOADER_ID, null, this);
     }
+
+    private void updateEmptyView(){
+        if (mMovieListAdapter.getCount()==0)
+        {
+            if ( mAlternateView != null)
+            if (!Utilities.isNetworkAvailable(this.getActivity())){
+                mAlternateView.setText(getResources().getString(R.string.no_internet_message));
+            }else
+                mAlternateView.setText(getResources().getString(R.string.no_movie_available));
+
+        }
+    }
+
 }

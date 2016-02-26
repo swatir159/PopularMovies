@@ -48,7 +48,7 @@
         <FrameLayout
             android:id="@+id/movie_detail_container"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:ignore="InconsistentLayout"
             android:layout_weight="1"
             android:layout_marginRight="10dp"

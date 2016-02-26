@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -78,10 +79,12 @@ public class MovieDownloaderSupport {
         if (PopMoviesConstants.NO_OF_PAGES_TO_DOWNLOAD >0 && PopMoviesConstants.NO_OF_PAGES_TO_DOWNLOAD <= total_page_count){
             total_page_count = PopMoviesConstants.NO_OF_PAGES_TO_DOWNLOAD;
         }
-        while (++ curr_page<= total_page_count)
+        while (++curr_page<= total_page_count)
         {
             jsonResponse = getQueryJSON(mContext, curr_page, PopMoviesConstants.PRIMARY_RELEASE_YEAR_TO_GET_DATA);
-            getMovieDataFromJsonandInsertIntoDB(jsonResponse);
+            if (jsonResponse != null)
+                getMovieDataFromJsonandInsertIntoDB(jsonResponse);
+            else break;
         }
     }
 
@@ -163,8 +166,13 @@ public class MovieDownloaderSupport {
 
         int inserted = 0;
         int updated = 0;
-
+        if ( rawJSON == null) {
+            if (PopMoviesConstants.DEBUG)  Log.d("PopMovies1", " rawJSON = null - returning"); return -1L;
+        }
         MoviesOutputJSON moviesOutput = mGson.fromJson(rawJSON, MoviesOutputJSON.class);
+        if (moviesOutput == null)  {
+            if (PopMoviesConstants.DEBUG)  Log.d("PopMovies1", " No data found from json - returning"); return -1L;
+        }
         if (PopMoviesConstants.DEBUG) Log.i("PopMovies", LOG_TAG + ":" + " Movies  =" + moviesOutput.toString());
         List<MovieJSON> movies = moviesOutput.getResults();
         ContentResolver cResolver = mContext.getContentResolver();
