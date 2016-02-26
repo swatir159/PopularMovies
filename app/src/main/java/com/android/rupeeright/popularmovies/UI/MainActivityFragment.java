@@ -212,8 +212,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                startActivity(intent);
                 **************************************************** */
                 mCallbacks.onItemSelected(selectedMovieId);
-               // if (Utilities.isNetworkAvailable( getActivity()))
-               //     initiateTrailernReviewDownload(selectedMovieDBId, selectedMovieId ); // starting the trailer & Review download
+                if (Utilities.isNetworkAvailable( getActivity()))
+                    initiateTrailernReviewDownload(selectedMovieDBId, selectedMovieId ); // starting the trailer & Review download
 
             }
         });
