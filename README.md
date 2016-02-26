@@ -45,6 +45,7 @@ stackoverflow.com
 http://android-er.blogspot.in/2014/04/example-of-viewpager-with-custom.html
 https://github.com/BoD/android-contentprovider-generator ( for content provider generator)
 https://futurestud.io/blog/retrofit-getting-started-and-android-client
+http://code.hootsuite.com/orientation-changes-on-android/
 
 
 #TODO : 
