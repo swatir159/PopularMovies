@@ -3,4 +3,7 @@
     <item type="layout" name="activity_main">
         @layout/activity_two_pane
     </item>
+    <item type="layout" name="fragment_movie_detail">
+        @layout/fragment_movie_detail_wide
+    </item>
 </resources>

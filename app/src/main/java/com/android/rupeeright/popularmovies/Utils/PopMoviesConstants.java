@@ -26,7 +26,7 @@ public class PopMoviesConstants {
 
     public static final String TAG_TASK_MAIN_FRAGMENT = "task_fragment";
     public static final String TAG_TASK_DETAIL_FRAGMENT = "detail_fragment";
-    public static final boolean DEBUG = /* false; */ true;
+    public static final boolean DEBUG = false; /* true; */
     public static final String DEBUG_LEVEL = "INFO";
     public static final String DEBUG_LEVEL_1 = "ERROR";
     public static final String DEBUG_LEVEL_2 = "WARNING";

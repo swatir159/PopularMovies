@@ -42,7 +42,7 @@ public class DetailDownloaderService extends IntentService {
                 int movie_id;
                 long id;
                 final String param = intent.getStringExtra(PopMoviesConstants.DETAIL_ACTIVITY_TRAILER_TAG);
-                Log.i("PopMovies1", LOG_TAG + ":"  + "param : " + param);
+                if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":"  + "param : " + param);
 
                 String[] tokens = param.trim().split("_");
                 for (String s : tokens)
@@ -52,7 +52,7 @@ public class DetailDownloaderService extends IntentService {
                 id = Long.parseLong(tokens[1]);
 
                 MovieDBExtraInfoDownloadService mDownloader = new MovieDBExtraInfoDownloadService(ctx);
-                Log.i("PopMovies1", LOG_TAG + ":"  + "downloading for id= " + id + "   movieDBId = " + movie_id);
+                if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG + ":"  + "downloading for id= " + id + "   movieDBId = " + movie_id);
                 mDownloader.getMovieDBTrailerInfo(movie_id, id);
                 mDownloader.getMovieDBReviewInfo(movie_id, id);
             }

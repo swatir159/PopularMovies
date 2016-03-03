@@ -61,6 +61,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity  {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             if (!super.onMenuItemSelected(featureId, item)) {
+                if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "clicked home - before navigateUpFromSameTask ");
+                NavUtils.navigateUpFromSameTask(this);
+            }
+            else {
+                if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "clicked home - return true ");
                 NavUtils.navigateUpFromSameTask(this);
             }
             return true;

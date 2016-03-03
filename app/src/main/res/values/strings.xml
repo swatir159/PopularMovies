@@ -14,6 +14,8 @@
     <string name="vote_count_content_description">Average Vote Count </string>
     <string name="original_language_content_description">Dummy Text</string>
     <string name="release_date_content_decription">Release Date</string>
+    <string name="default_release_date">01 Jan 1900</string>
+    <string name="default_rating">00.00/10</string>
     <string name="overview_title">Overview</string>
     <string name="default_review_text">Kung Fu Panda has not dissapointed me. The vilaaains are not scary. My son, who is nine yearrs old enjoyed it thoroughly</string>
     <string name="default_author">Unknown</string>

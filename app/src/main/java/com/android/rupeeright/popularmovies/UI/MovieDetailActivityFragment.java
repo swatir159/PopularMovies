@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
@@ -58,6 +59,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.validation.Validator;
+
+import static android.support.v4.view.MenuItemCompat.*;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -129,12 +132,14 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     private ViewPager mTrailerPager;
     private ShareActionProvider mShareActionProvider;
     private TrailerPagerAdapter mTrailerPagerAdapter;
+    private String mLoadedTrailerData;
 
     private String mScrip;
     private static final String TRAILER_SHARE_HASHTAG = PopMoviesConstants.MOVIE_TRAILER_SHARE_TAG;
 
     public MovieDetailActivityFragment() {
         setHasOptionsMenu(true);
+        mLoadedTrailerData = null;
     }
 
     @Override
@@ -263,6 +268,31 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        if (this.getActivity() instanceof MainActivity)
+        {
+            //two pane window
+            inflater.inflate(R.menu.movie_menu_detail_fragment, menu);
+        }
+        else inflater.inflate(R.menu.menu_movie_detail, menu);
+        MenuItem id = menu.findItem(R.id.action_share);
+        if (id instanceof SupportMenuItem) {
+           if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " id instanceof SupportMenuItem");
+        }else {  if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", " id NOT instanceof SupportMenuItem"); }
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(id);
+
+        if (mShareActionProvider != null){
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "Shareaction provider not null - calling set share intenet");
+            mShareActionProvider.setShareIntent(createShareTrailerIntent("Nothing to Share"));
+        }
+        else
+        { if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "Shareaction provider is null - no setShareintent");}
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -285,33 +315,26 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
     }
 
+    /*
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        if (this.getActivity() instanceof MainActivity)
-        {
-            //two pane window
-            inflater.inflate(R.menu.movie_menu_detail_fragment, menu);
-        }
-        else inflater.inflate(R.menu.menu_movie_detail, menu);
-        MenuItem id = menu.findItem(R.id.action_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(id);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_share) {
+            if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", LOG_TAG+":"+ " action share clicked");
+            if (mLoadedTrailerData != null)
+
+                Toast.makeText(this.getActivity(),"Sharing " + mLoadedTrailerData, Toast.LENGTH_SHORT ).show();
+            else
+                Toast.makeText(this.getActivity(),"Nothing to Share" , Toast.LENGTH_SHORT ).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
     */
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void LoadFragmentFromFilmData(View fragmentViewParam , /*int heightParam , */ final Film mRecdFilm)
@@ -375,10 +398,12 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         title.setText(mRecdFilm.getTitle());
 
         TextView releaseDate = (TextView) fragmentViewParam.findViewById(R.id.ReleaseDate);
+
         releaseDate.setText(mRecdFilm.getFormattedDate());
 
         if (PopMoviesConstants.DEBUG) Log.d(getResources().getString(R.string.logcat_tag), "loading the Rating Value");
         TextView ratingVal = (TextView) fragmentViewParam.findViewById(R.id.RatingValue);
+
         ratingVal.setText( mRecdFilm.getRating() + "/10");
 
         //Log.d(getResources().getString(R.string.logcat_tag), "loading the Overview");
@@ -386,6 +411,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         TextView overView = (TextView) fragmentViewParam.findViewById(R.id.Overview);
         //overView.setHeight((int)Math.round(heightParam* PopMoviesConstants.OVERVIEW_HEIGHT_PERCENT));
         overView.setText(mRecdFilm.getOverview());
+
         overView.setMovementMethod(new ScrollingMovementMethod());
         overView.setContentDescription(getString(R.string.overview_content_description));
 
@@ -479,16 +505,17 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
             }catch(NullPointerException e){
             toastStr += "is NULL";
         }
+
         Log.i("PopMovies1", sb.toString());
         */
-        String LoadedTrailerdata = LoadTrailerData(tc);
+        mLoadedTrailerData = LoadTrailerData(tc);
             /* sHARE */
 
         if(mShareActionProvider != null){
-                mScrip = "Sharing through Pop Movies app: check this movie" + title + ".";
-                if (LoadedTrailerdata != null)
+                mScrip = "Sharing through Pop Movies app: check this movie " + title + ".";
+                if (mLoadedTrailerData != null)
                 {
-                    mScrip +=  PopMoviesConstants.YOUTUBE_URL + LoadedTrailerdata;
+                    mScrip +=  PopMoviesConstants.YOUTUBE_URL + mLoadedTrailerData;
                     mShareActionProvider.setShareIntent(createShareTrailerIntent(mScrip));
 
 
@@ -521,7 +548,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
             toastStr += "is NULL";
             sb1.append(" is Null");
         }
-        Log.i("PopMovies1", sb1.toString());
+        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", sb1.toString());
         //Toast.makeText(this.getActivity(), toastStr, Toast.LENGTH_SHORT).show();
         LoadReviewData(rv);
 
@@ -537,7 +564,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
 
     private String LoadTrailerData(TrailersCursor trailerCursor) {
-        /* if (PopMoviesConstants.DEBUG) */ Log.i("PopMovies1", LOG_TAG + ":"+ " LoadTrailerData");
+         if (PopMoviesConstants.DEBUG)  Log.i("PopMovies1", LOG_TAG + ":"+ " LoadTrailerData");
 
         mTrailerSection.removeAllViews();
         Set<String> trailerSet = new LinkedHashSet<>();
@@ -661,9 +688,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
     private Intent createShareTrailerIntent(String text) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("Text/Plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text + TRAILER_SHARE_HASHTAG);
+        //shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " " + TRAILER_SHARE_HASHTAG);
         return shareIntent;
     }
 
@@ -816,4 +844,6 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     public void onSettingsChanged(String SortBy, String SortOrder){
         getLoaderManager().restartLoader(MOVIEITEM_LOADER_ID, null, this);
     }
+
+
 }

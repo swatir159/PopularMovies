@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="activity_main" type="layout">@layout/activity_two_pane</item>
+    <item type="layout" name="activity_main">
+        @layout/activity_two_pane
+    </item>
 </resources>

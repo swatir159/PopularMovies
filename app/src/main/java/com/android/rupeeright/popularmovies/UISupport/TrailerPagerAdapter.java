@@ -201,23 +201,21 @@ public class TrailerPagerAdapter extends PagerAdapter {
                     String youtubeId = (String) v.getTag();
 
                     if ( !Utilities.isNetworkAvailable(activity)){
-                        if (PopMoviesConstants.DEBUG) Log.i("PopMovies1", "No Network available. So not attempting to start video intents.");
+                        Log.i("PopMovies1", "No Network available. So not attempting to start video intents.");
                         return;
                     }
-                    if (PopMoviesConstants.DEBUG)
-                        Log.i("PopMovies1", LOG_TAG + ":" + " Starting youtube intent ");
+                    Log.i("PopMovies1", LOG_TAG + ":" + " Starting youtube intent with Trailer Id =  " + youtubeId);
 
                     Intent YTintent = null;
                     if (result == YouTubeInitializationResult.SUCCESS) {
-                        if (PopMoviesConstants.DEBUG)
-                            Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - Trying to get Intent with YTStandalone player");
+
+                        Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - Trying to get Intent with YTStandalone player");
                         YTintent = YouTubeStandalonePlayer.createVideoIntent(
                             (Activity) activity, activity.getString(R.string.theyoutube_api_key), youtubeId, 0, true, false);
                         if (YTintent != null) {
                             List<ResolveInfo> r = activity.getPackageManager().queryIntentActivities(YTintent, PackageManager.MATCH_DEFAULT_ONLY);
                             if (r != null && r.size() > 0) {
-                                if (PopMoviesConstants.DEBUG)
-                                    Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - Intent resolved - before starting youTube intent");
+                                Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - Intent resolved - before starting youTube intent");
                                 activity.startActivity(YTintent);
 
                             }
@@ -226,14 +224,13 @@ public class TrailerPagerAdapter extends PagerAdapter {
                                 String url = PopMoviesConstants.YOUTUBE_URL + youtubeId;
                                 Intent intentURL = new Intent(Intent.ACTION_VIEW);
                                 intentURL.setData(Uri.parse(url));
-                                if (PopMoviesConstants.DEBUG)
-                                    Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - but videoIntent not Resolvable -before starting URL with viewer");
+                                Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - but videoIntent not Resolvable -before starting URL with viewer . intentURL = " + intentURL);
                                 activity.startActivity(intentURL);
                             }
                         }
                         else{
-                            if (PopMoviesConstants.DEBUG)
-                                Log.d("PopMovies1", LOG_TAG + ":" + "YT initialized but cannot CreateVideoIntent on the standalone player intent");
+
+                             Log.d("PopMovies1", LOG_TAG + ":" + "YT initialized but cannot CreateVideoIntent on the standalone player intent");
                              YTintent = YouTubeIntents.createPlayVideoIntentWithOptions(activity, currTrailerId, true, false);
                              activity.startActivity(YTintent);
                         }
@@ -241,15 +238,15 @@ public class TrailerPagerAdapter extends PagerAdapter {
                     else {
                         if (YouTubeIntents.canResolvePlayVideoIntent(mCtx)) {
                             // Start an intent to the YouTube app
-                            if (PopMoviesConstants.DEBUG)
-                                Log.d("PopMovies1", LOG_TAG + ":" + "Sending YouTubeIntent");
+
+                            Log.d("PopMovies1", LOG_TAG + ":" + "Sending YouTubeIntent");
                             mCtx.startActivity(YouTubeIntents.createPlayVideoIntent(mCtx, youtubeId));
 
                         }
                         else{
-                            if (PopMoviesConstants.DEBUG)
-                                Log.d("PopMovies1", LOG_TAG + ":" + "Cannot initialize YT & also cannot resolve YTIntent..starting URL with viewer");
+
                             String url = PopMoviesConstants.YOUTUBE_URL + youtubeId;
+                            Log.d("PopMovies1", LOG_TAG + ":" + "Cannot initialize YT & also cannot resolve YTIntent..starting URL with viewer: url = " + url);
                             Intent intentURL = new Intent(Intent.ACTION_VIEW);
                             intentURL.setData(Uri.parse(url));
                             activity.startActivity(intentURL);
