@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.android.rupeeright.popularmovies.R;
+import com.android.rupeeright.popularmovies.Utils.Utilities;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import com.android.rupeeright.popularmovies.Model.Film;
 import com.android.rupeeright.popularmovies.Utils.PopMoviesConstants;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 /**
  * Created by swatir on 1/13/2016.
@@ -119,6 +121,18 @@ public class ImageAdapter extends BaseAdapter {
 
         Film film = mFilmsList.get(position);
         //imageView.setImageResource(mThumbIds[position]);
+        if (Utilities.getSortByPreference(mContext).equals("Favorite") ){
+
+            Glide.with(mContext)
+                    .load(mBaseURLToFetchImage + mImageSizeToDownload + film.getPosterPath())
+                    .placeholder(R.drawable.place_holder)
+                    .error(R.drawable.big_problem)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(viewHolder.movieThumbnail);
+
+        }
+        else
+
         Glide.with(mContext)
                 .load( mBaseURLToFetchImage + mImageSizeToDownload + film.getPosterPath())
                 .placeholder(R.drawable.place_holder)

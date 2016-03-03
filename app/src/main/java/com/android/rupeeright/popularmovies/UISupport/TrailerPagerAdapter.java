@@ -40,88 +40,6 @@ import com.google.android.youtube.player.YouTubeThumbnailView;
  */
 public class TrailerPagerAdapter extends PagerAdapter {
     public static final String LOG_TAG = TrailerPagerAdapter.class.getSimpleName();
-/*
-    int pages = 1;
-
-    int[] res = {
-            android.R.drawable.ic_dialog_alert,
-            android.R.drawable.ic_menu_camera,
-            android.R.drawable.ic_menu_compass,
-            android.R.drawable.ic_menu_directions,
-            android.R.drawable.ic_menu_gallery
-
-    };
-
-    int[] backgrounfColor = {
-            0xFF101010,
-            0xFF202020,
-            0xFF303030,
-            0xFF404040,
-            0xFF505050
-    };
-
-    public void releaseLoaders() {
-
-    }
-
-    public TrailerPagerAdapter(Context ctx, List<String> TrailerIds ){
-
-
-        if (PopMoviesConstants.DEBUG) Log.d("PopMovies1", LOG_TAG + ":" + " Constructor ");
-    }
-
-    @Override
-    public int getCount() {
-        return pages;
-    }
-
-    @Override
-    public Object instantiateItem(final ViewGroup container, int position) {
-
-
-        TextView tv = new TextView(container.getContext());
-        tv.setTextColor(Color.WHITE);
-        tv.setTextSize(30);
-        tv.setTypeface(Typeface.DEFAULT_BOLD);
-        tv.setText(String.valueOf(position));
-
-        ImageView iv = new ImageView(container.getContext());
-        iv.setImageResource(res[position]);
-        ViewGroup.LayoutParams p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        iv.setLayoutParams(p);
-
-        LinearLayout l = new LinearLayout(container.getContext());
-        l.setOrientation(LinearLayout.VERTICAL);
-        ViewGroup.LayoutParams p2 = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        l.setBackgroundColor(backgrounfColor[position]);
-        l.setLayoutParams(p2);
-        l.addView(tv);
-        l.addView(iv);
-
-        final int page = position;
-
-        l.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(container.getContext(),"page " + page + "clicked" , Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        container.addView(l);
-        return l;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout)object);
-    }
-
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view==object;
-    }
-*/
     private static Context getmContext() {
         return mCtx;
     }
@@ -222,6 +140,7 @@ public class TrailerPagerAdapter extends PagerAdapter {
                             else {
                                 // Youtube not available. Open the youtube video url instead
                                 String url = PopMoviesConstants.YOUTUBE_URL + youtubeId;
+                                //String url = "vnd.youtube://" + youtubeId;
                                 Intent intentURL = new Intent(Intent.ACTION_VIEW);
                                 intentURL.setData(Uri.parse(url));
                                 Log.d("PopMovies1", LOG_TAG + ":" + "Initialization Sucess - but videoIntent not Resolvable -before starting URL with viewer . intentURL = " + intentURL);
@@ -240,15 +159,17 @@ public class TrailerPagerAdapter extends PagerAdapter {
                             // Start an intent to the YouTube app
 
                             Log.d("PopMovies1", LOG_TAG + ":" + "Sending YouTubeIntent");
-                            mCtx.startActivity(YouTubeIntents.createPlayVideoIntent(mCtx, youtubeId));
+                            activity.startActivity(YouTubeIntents.createPlayVideoIntent(activity, youtubeId));
 
                         }
                         else{
 
                             String url = PopMoviesConstants.YOUTUBE_URL + youtubeId;
-                            Log.d("PopMovies1", LOG_TAG + ":" + "Cannot initialize YT & also cannot resolve YTIntent..starting URL with viewer: url = " + url);
+                            //String url = "vnd.youtube://" + youtubeId;
+                            //String url = "http://www.youtube.com/v/" + youtubeId;
                             Intent intentURL = new Intent(Intent.ACTION_VIEW);
                             intentURL.setData(Uri.parse(url));
+                            Log.d("PopMovies1", LOG_TAG + ":" + "Cannot initialize YT & also cannot resolve YTIntent..starting URL with viewer: url = " + intentURL);
                             activity.startActivity(intentURL);
                         }
                     }

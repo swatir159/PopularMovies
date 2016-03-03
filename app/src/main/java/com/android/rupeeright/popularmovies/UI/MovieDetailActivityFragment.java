@@ -571,7 +571,8 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         trailerCursor.moveToFirst();
         do {
             try {
-                trailerSet.add(trailerCursor.getTrailerId());
+               // trailerSet.add(trailerCursor.getTrailerId());
+                trailerSet.add(trailerCursor.getKey());
             } catch (NullPointerException e){}
         } while (trailerCursor.moveToNext());
 
