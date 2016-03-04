@@ -402,7 +402,7 @@ public class MovieDownloaderSupport {
            /* hardcoding movie id  for testing >>>>>>>>>>>>>>>>>>>>>>>>*/
             //data.setId(movieDBid);
 
-            if (PopMoviesConstants.DEBUG) Log.i("PopMovies" , "Trailer Id from JSON :=" + data.getId() + "Records received : " + data.getResults().size() );
+           // if (PopMoviesConstants.DEBUG) Log.i("PopMovies" , "Trailer Id from JSON :=" + data.getId() + "Records received : " + data.getResults().size() );
             /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< hardcoding movie id  for testing */
 
         } catch (IOException e) {
@@ -425,7 +425,7 @@ public class MovieDownloaderSupport {
            /* hardcoding movie id  for testing >>>>>>>>>>>>>>>>>>>>>>>>*/
             //data.setId(movieDBid);
 
-            if (PopMoviesConstants.DEBUG) Log.i("PopMovies" , "Review Id from JSON :=" + data.getId() + "Records received : " + data.getResults().size() );
+           // if (PopMoviesConstants.DEBUG) Log.i("PopMovies" , "Review Id from JSON :=" + data.getId() + "Records received : " + data.getResults().size() );
             /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< hardcoding movie id  for testing */
 
         } catch (IOException e) {
